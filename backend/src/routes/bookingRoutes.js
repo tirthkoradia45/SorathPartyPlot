@@ -5,12 +5,14 @@ const router = express.Router();
 // Import Controllers
 const {
     getAllBookings,
-    createBooking
+    createBooking,
+    checkAvailability
 } = require("../controllers/bookingController");
 
 // GET ALL BOOKINGS
 router.get("/", getAllBookings);
 
+router.get("/availability", checkAvailability);
 // CREATE BOOKING
 router.post("/", createBooking);
 

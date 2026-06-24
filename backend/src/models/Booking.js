@@ -26,6 +26,13 @@ const bookingSchema = new mongoose.Schema({
         required: true
     },
 
+    // Number Of Villas Requested
+    villaCount: {
+        type: Number,
+        required: true,
+        default: 1
+    },
+
     // Check In Date
     checkInDate: {
         type: Date,
