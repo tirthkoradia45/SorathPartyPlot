@@ -7,6 +7,7 @@ import VillaBooking from "./pages/VillaBooking";
 import PartyPlotBooking from "./pages/PartyPlotBooking";
 import Contact from "./pages/Contact";
 import AdminLogin from "./pages/AdminLogin";
+import AdminBookings from "./pages/AdminBookings"; // NEW IMPORT
 
 /**
  * Main App Component
@@ -14,25 +15,47 @@ import AdminLogin from "./pages/AdminLogin";
  */
 function App() {
   return (
-    // BrowserRouter: Enables client-side routing in the application
+    // BrowserRouter: Enables client-side routing
     <BrowserRouter>
-      {/* Routes: Container for all route definitions */}
+
+      {/* All Application Routes */}
       <Routes>
 
-        {/* Homepage: Welcome page with resort information */}
-        <Route path="/" element={<Home />} />
+        {/* Home Page */}
+        <Route
+          path="/"
+          element={<Home />}
+        />
 
-        {/* Villa Booking Page: Allows users to browse and book villas */}
-        <Route path="/villas" element={<VillaBooking />} />
+        {/* Villa Booking */}
+        <Route
+          path="/villas"
+          element={<VillaBooking />}
+        />
 
-        {/* Party Plot Booking Page: Allows users to book party plots */}
-        <Route path="/party-plot" element={<PartyPlotBooking />} />
+        {/* Party Plot Booking */}
+        <Route
+          path="/party-plot"
+          element={<PartyPlotBooking />}
+        />
 
-        {/* Contact Page: Displays contact information and inquiries */}
-        <Route path="/contact" element={<Contact />} />
+        {/* Contact */}
+        <Route
+          path="/contact"
+          element={<Contact />}
+        />
 
-        {/* Admin Login Page: Administrative access for staff */}
-        <Route path="/admin" element={<AdminLogin />} />
+        {/* Admin Login */}
+        <Route
+          path="/admin"
+          element={<AdminLogin />}
+        />
+
+        {/* Admin Bookings */}
+        <Route
+          path="/admin/bookings"
+          element={<AdminBookings />}
+        />
 
       </Routes>
 
