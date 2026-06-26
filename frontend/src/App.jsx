@@ -7,7 +7,8 @@ import VillaBooking from "./pages/VillaBooking";
 import PartyPlotBooking from "./pages/PartyPlotBooking";
 import Contact from "./pages/Contact";
 import AdminLogin from "./pages/AdminLogin";
-import AdminBookings from "./pages/AdminBookings"; // NEW IMPORT
+import AdminBookings from "./pages/AdminBookings"; 
+import AdminWeddingBookings from "./pages/AdminWeddingBooking";
 
 /**
  * Main App Component
@@ -55,6 +56,10 @@ function App() {
         <Route
           path="/admin/bookings"
           element={<AdminBookings />}
+        />
+        <Route
+          path="/admin/weddings"
+          element={<AdminWeddingBookings />}
         />
 
       </Routes>

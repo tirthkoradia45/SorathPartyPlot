@@ -6,10 +6,10 @@ const Booking = require("../models/Booking");
 
 const Villa = require("../models/Villa");
 
+const WeddingBooking = require("../models/WeddingBooking");
 
-// ======================================================
 // GET ALL BOOKINGS
-// ======================================================
+
 // Controller:
 // Returns all booking records from MongoDB.
 //
@@ -55,10 +55,8 @@ const getAllBookings = async (req, res) => {
 
 };
 
-
-// ======================================================
 // CREATE NEW BOOKING
-// ======================================================
+
 // This controller performs:
 //
 // 1. Read booking details
@@ -67,15 +65,12 @@ const getAllBookings = async (req, res) => {
 // 4. Check available villas
 // 5. Prevent overbooking
 // 6. Create booking
-// ======================================================
+
 
 const createBooking = async (req, res) => {
 
     try {
 
-        // ----------------------------------
-        // Extract data sent by frontend
-        // ----------------------------------
 
         const {
 
@@ -86,14 +81,49 @@ const createBooking = async (req, res) => {
             villaCount,
             checkInDate,
             checkOutDate
+            
 
         } = req.body;
 
+        // CHECK IF A WEDDING IS ALREADY BOOKED
+        // If a wedding exists during the selected dates,
+        // all 40 villas are reserved.
+        // Therefore, reject the villa booking.
+        const weddingExists = await WeddingBooking.findOne({
 
-        // ----------------------------------
+            status: {
+
+                $ne: "Cancelled"
+
+            },
+
+            startDate: {
+
+                $lt: checkOutDate
+
+            },
+
+            endDate: {
+
+                $gt: checkInDate
+
+            }
+
+        });
+
+        if (weddingExists) {
+
+            return res.status(400).json({
+
+                message:
+                    "No Villas Available. All villas are reserved for a Wedding during the selected dates."
+
+            });
+
+        }
+
         // FIND OVERLAPPING BOOKINGS
-        // ----------------------------------
-        //
+        
         // Date overlap condition
         //
         // Existing Booking
@@ -126,10 +156,8 @@ const createBooking = async (req, res) => {
 
         });
 
-
-        // ----------------------------------
         // CALCULATE ALREADY BOOKED VILLAS
-        // ----------------------------------
+
 
         let bookedVillas = 0;
 
@@ -139,10 +167,8 @@ const createBooking = async (req, res) => {
 
         });
 
-
-        // ----------------------------------
         // FETCH SELECTED VILLA
-        // ----------------------------------
+
 
         const villa = await Villa.findById(villaId);
 
@@ -156,18 +182,15 @@ const createBooking = async (req, res) => {
 
         }
 
-
-        // ----------------------------------
         // CALCULATE AVAILABLE VILLAS
-        // ----------------------------------
+        
 
         const availableVillas =
             villa.totalUnits - bookedVillas;
 
 
-        // ----------------------------------
         // PREVENT OVERBOOKING
-        // ----------------------------------
+    
 
         if (villaCount > availableVillas) {
 
@@ -180,10 +203,8 @@ const createBooking = async (req, res) => {
 
         }
 
-
-        // ----------------------------------
         // CREATE BOOKING
-        // ----------------------------------
+    
 
         const booking = await Booking.create({
 
@@ -198,9 +219,8 @@ const createBooking = async (req, res) => {
         });
 
 
-        // ----------------------------------
         // SEND SUCCESS RESPONSE
-        // ----------------------------------
+     
 
         res.status(201).json({
 
@@ -223,9 +243,8 @@ const createBooking = async (req, res) => {
 };
 
 
-// ======================================================
 // CHECK VILLA AVAILABILITY
-// ======================================================
+
 //
 // This API does NOT create booking.
 //
@@ -238,7 +257,7 @@ const createBooking = async (req, res) => {
 // Remaining Villas
 //
 // Used by frontend for live availability.
-// ======================================================
+
 
 const checkAvailability = async (req, res) => {
 
@@ -254,10 +273,8 @@ const checkAvailability = async (req, res) => {
 
         } = req.query;
 
-
-        // ----------------------------------
         // FIND OVERLAPPING BOOKINGS
-        // ----------------------------------
+    
 
         const overlappingBookings = await Booking.find({
 
@@ -274,9 +291,8 @@ const checkAvailability = async (req, res) => {
         });
 
 
-        // ----------------------------------
         // CALCULATE BOOKED VILLAS
-        // ----------------------------------
+       
 
         let bookedVillas = 0;
 
@@ -287,9 +303,8 @@ const checkAvailability = async (req, res) => {
         });
 
 
-        // ----------------------------------
         // FETCH VILLA
-        // ----------------------------------
+   
 
         const villa = await Villa.findById(villaId);
 
@@ -303,18 +318,14 @@ const checkAvailability = async (req, res) => {
 
         }
 
-
-        // ----------------------------------
         // CALCULATE REMAINING VILLAS
-        // ----------------------------------
+      
 
         const availableVillas =
             villa.totalUnits - bookedVillas;
 
-
-        // ----------------------------------
         // SEND RESULT
-        // ----------------------------------
+     
 
         res.status(200).json({
 
@@ -339,10 +350,9 @@ const checkAvailability = async (req, res) => {
 };
 
 
-// ======================================================
 // UPDATE BOOKING STATUS
-// ======================================================
-//
+
+
 // Used by Admin Dashboard.
 //
 // Example:
@@ -358,7 +368,7 @@ const checkAvailability = async (req, res) => {
 // Route:
 //
 // PATCH /api/bookings/:id
-// ======================================================
+
 
 const updateBookingStatus = async (req, res) => {
 

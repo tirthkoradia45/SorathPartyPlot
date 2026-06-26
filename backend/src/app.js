@@ -1,9 +1,8 @@
-// Import Express framework for building REST API
+
 const express = require("express");
 // Import CORS middleware for cross-origin requests
 const cors = require("cors");
 
-// Create Express application instance
 const app = express();
 
 // Middleware: Parse incoming JSON requests
@@ -14,6 +13,7 @@ app.use(cors());
 // Import route handlers
 const villaRoutes = require("./routes/villaRoutes");  // Villa booking routes
 const bookingRoutes = require("./routes/bookingRoutes");  // Booking management routes
+const weddingBookingRoutes = require("./routes/weddingBookingRoutes"); // Wedding Booking routes
 
 /**
  * Test/Health Check Route
@@ -37,6 +37,8 @@ app.use("/api/villas", villaRoutes);
  * POST http://localhost:5000/api/bookings - Create new booking
  */
 app.use("/api/bookings", bookingRoutes);
+
+app.use("/api/wedding-bookings", weddingBookingRoutes);
 
 // Export app so server.js can use it to start the server
 module.exports = app;
