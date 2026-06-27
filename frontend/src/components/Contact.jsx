@@ -1,0 +1,186 @@
+import {
+  FaMapMarkerAlt,
+  FaPhoneAlt,
+  FaEnvelope,
+  FaDirections,
+} from "react-icons/fa";
+
+function ContactSection() {
+  return (
+    <section
+      id="contact"
+      className="bg-[#111111] py-28 px-6"
+    >
+      <div className="max-w-7xl mx-auto">
+
+        {/* Heading */}
+
+        <div
+          className="text-center mb-20"
+          data-aos="fade-up"
+        >
+
+          <p className="gallery-subtitle">
+
+            ✦ CONTACT & LOCATION ✦
+
+          </p>
+
+          <h2 className="facility-title">
+
+            Plan Your Perfect Celebration
+
+          </h2>
+
+          <div className="facility-divider">
+
+            <span></span>
+
+            <div className="facility-diamond">
+
+              ✦
+
+            </div>
+
+            <span></span>
+
+          </div>
+
+          <p className="facility-description">
+
+          Whether you're planning a dream wedding,
+          a family celebration, or a relaxing getaway,
+          we're here to make every moment unforgettable.
+          </p>
+
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-14">
+
+          {/* Left */}
+
+          <div className="contact-card">
+
+            <div className="contact-item">
+
+              <FaMapMarkerAlt className="contact-icon"/>
+
+              <div>
+
+                <h3>📍 Resort Address</h3>
+
+                <p>
+
+                  Near Novelty Furniture,
+                  <br/>
+
+                  Shree Vallabhacharya Dwar,
+                  <br/>
+
+                  Vaadla Faatak,
+                  <br/>
+
+                  Junagadh–Somnath Highway,
+                  <br/>
+
+                  Junagadh, Gujarat – 362015
+
+                </p>
+
+              </div>
+
+            </div>
+
+            <div className="contact-item">
+
+              <FaPhoneAlt className="contact-icon"/>
+
+              <div>
+
+                <h3>📞 Call Us</h3>
+
+                <p>
+
+                  <a href="tel:+919428575445">
+
+                    +91 94285 75445
+
+                  </a>
+
+                </p>
+
+              </div>
+
+            </div>
+
+            <div className="contact-item">
+
+              <FaEnvelope className="contact-icon"/>
+
+              <div>
+
+                <h3>✉ Email Us</h3>
+
+                <p>
+
+                  <a href="mailto:info@sorathresort.com">
+
+                    info@sorathresort.com
+
+                  </a>
+
+                </p>
+
+              </div>
+
+            </div>
+
+            <div className="mt-10 flex flex-wrap gap-5">
+
+              <a
+                href="tel:+919428575445"
+                className="contact-btn"
+              >
+
+                Call Now
+
+              </a>
+
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Sorath+Resort+Party+Lawns+Junagadh"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="direction-btn"
+              >
+
+                <FaDirections />
+
+                Get Directions
+
+              </a>
+
+            </div>
+
+          </div>
+
+          {/* Right */}
+
+          <div className="map-wrapper">
+
+            <iframe
+              title="Sorath Resort Map"
+              src="https://www.google.com/maps?q=Sorath+Resort+Party+Lawns+Junagadh&output=embed"
+              loading="lazy"
+              allowFullScreen
+            ></iframe>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+  );
+}
+
+export default ContactSection;

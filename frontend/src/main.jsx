@@ -1,17 +1,20 @@
-// Import React StrictMode for additional development checks
-import { StrictMode } from 'react';
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 
-// Import ReactDOM root creation
-import { createRoot } from 'react-dom/client';
+import "./index.css";
 
-// Import global styles
-import './index.css';
+import App from "./App.jsx";
 
-// Import main App component
-import App from './App.jsx';
+import AOS from "aos";
+import "aos/dist/aos.css";
 
-// Initialize React application
-createRoot(document.getElementById('root')).render(
+AOS.init({
+  duration: 1200,
+  once: true,
+  easing: "ease-in-out",
+});
+
+createRoot(document.getElementById("root")).render(
   <StrictMode>
     <App />
   </StrictMode>

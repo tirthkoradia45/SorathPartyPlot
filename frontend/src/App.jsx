@@ -1,71 +1,64 @@
-// Import React Router
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+  // Import React Router
+  import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-// Import Pages
-import Home from "./pages/Home";
-import VillaBooking from "./pages/VillaBooking";
-import PartyPlotBooking from "./pages/PartyPlotBooking";
-import Contact from "./pages/Contact";
-import AdminLogin from "./pages/AdminLogin";
-import AdminBookings from "./pages/AdminBookings"; 
-import AdminWeddingBookings from "./pages/AdminWeddingBooking";
+  // Import Pages
+  import Home from "./pages/Home";
+  import VillaBooking from "./pages/VillaBooking";
+  import PartyPlotBooking from "./pages/PartyPlotBooking";
 
-/**
- * Main App Component
- * Manages application routing and displays different pages based on URL path
- */
-function App() {
-  return (
-    // BrowserRouter: Enables client-side routing
-    <BrowserRouter>
+  import AdminLogin from "./pages/AdminLogin";
+  import AdminBookings from "./pages/AdminBookings"; 
+  import AdminWeddingBookings from "./pages/AdminWeddingBooking";
 
-      {/* All Application Routes */}
-      <Routes>
+  /**
+   * Main App Component
+   * Manages application routing and displays different pages based on URL path
+   */
+  function App() {
+    return (
+      // BrowserRouter: Enables client-side routing
+      <BrowserRouter>
 
-        {/* Home Page */}
-        <Route
-          path="/"
-          element={<Home />}
-        />
+        {/* All Application Routes */}
+        <Routes>
 
-        {/* Villa Booking */}
-        <Route
-          path="/villas"
-          element={<VillaBooking />}
-        />
+          {/* Home Page */}
+          <Route
+            path="/"
+            element={<Home />}
+          />
 
-        {/* Party Plot Booking */}
-        <Route
-          path="/party-plot"
-          element={<PartyPlotBooking />}
-        />
+          {/* Villa Booking */}
+          <Route
+            path="/villas"
+            element={<VillaBooking />}
+          />
 
-        {/* Contact */}
-        <Route
-          path="/contact"
-          element={<Contact />}
-        />
+          {/* Party Plot Booking */}
+          <Route
+            path="/party-plot"
+            element={<PartyPlotBooking />}
+          />
+          {/* Admin Login */}
+          <Route
+            path="/admin"
+            element={<AdminLogin />}
+          />
 
-        {/* Admin Login */}
-        <Route
-          path="/admin"
-          element={<AdminLogin />}
-        />
+          {/* Admin Bookings */}
+          <Route
+            path="/admin/bookings"
+            element={<AdminBookings />}
+          />
+          <Route
+            path="/admin/weddings"
+            element={<AdminWeddingBookings />}
+          />
 
-        {/* Admin Bookings */}
-        <Route
-          path="/admin/bookings"
-          element={<AdminBookings />}
-        />
-        <Route
-          path="/admin/weddings"
-          element={<AdminWeddingBookings />}
-        />
+        </Routes>
 
-      </Routes>
+      </BrowserRouter>
+    );
+  }
 
-    </BrowserRouter>
-  );
-}
-
-export default App;
+  export default App;

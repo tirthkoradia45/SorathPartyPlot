@@ -1,28 +1,41 @@
-// Import all components needed for homepage
+// Import all homepage components
+
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
+import About from "../components/About";
 import Facilities from "../components/Facilities";
+import Gallery from "../components/Gallery";
 import Footer from "../components/Footer";
-
+import WhyChoose from "../components/WhyChoose";
+import Contact from "../components/Contact"
 /**
  * Home Page Component
- * Main landing page that displays the resort overview with navbar, hero section, facilities, and footer
  */
+
 function Home() {
   return (
     <>
       {/* Navigation Bar */}
       <Navbar />
 
-      {/* Hero Banner Section */}
+      {/* Hero Section */}
       <Hero />
 
-      {/* Facilities/Amenities Section */}
+      {/* About Section */}
+      <About />
+
+      {/* Facilities Section */}
       <Facilities />
 
-      {/* Footer Section */}
-      <Footer />
+      {/* Gallery Section */}
+      <Gallery />
 
+      <WhyChoose />
+
+      <Contact />
+
+      {/* Footer */}
+      <Footer />
     </>
   );
 }
