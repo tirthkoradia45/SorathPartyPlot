@@ -9,6 +9,7 @@
   import AdminLogin from "./pages/AdminLogin";
   import AdminBookings from "./pages/AdminBookings"; 
   import AdminWeddingBookings from "./pages/AdminWeddingBooking";
+  import CheckAvailability from "./pages/CheckAvailability";
 
   /**
    * Main App Component
@@ -39,6 +40,14 @@
             path="/party-plot"
             element={<PartyPlotBooking />}
           />
+          <Route
+            path="/WeddingBooking"
+            element={<PartyPlotBooking />}
+          />
+          <Route
+            path="/wedding-booking"
+            element={<PartyPlotBooking />}
+          />
           {/* Admin Login */}
           <Route
             path="/admin"
@@ -53,6 +62,11 @@
           <Route
             path="/admin/weddings"
             element={<AdminWeddingBookings />}
+          />
+
+          <Route
+            path="/check-availability"
+            element={<CheckAvailability />}
           />
 
         </Routes>

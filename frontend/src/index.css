@@ -3,7 +3,6 @@
 /* ==========================================
    GLOBAL STYLES
 ========================================== */
-
 html {
   scroll-behavior: smooth;
 }
@@ -29,6 +28,10 @@ body {
     letter-spacing:.8px;
     text-decoration:none;
     transition:.3s;
+}
+.nav-active {
+  color: #D4AF37;
+  border-bottom: 2px solid #D4AF37;
 }
 
 .nav-link:hover{
