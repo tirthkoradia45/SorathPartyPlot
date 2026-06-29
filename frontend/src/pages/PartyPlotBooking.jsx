@@ -1,5 +1,9 @@
 import { useState } from "react"
 import axios from "axios";
+import lawnImage from "../assets/lawn.jpg";
+import banquetImage from "../assets/hall.jpg";
+import poolImage from "../assets/pool.jpg";
+
 
 function PartyPlotBooking() {
   const [loading, setLoading] = useState(false);
@@ -239,416 +243,275 @@ function PartyPlotBooking() {
   };
 
 return (
+  <div className="min-h-screen bg-gradient-to-b from-[#0f0f0f] via-[#141414] to-[#111111] text-white py-16">
 
-  <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 py-10">
+    <div className="max-w-6xl mx-auto bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-3xl shadow-[0_0_40px_rgba(212,175,55,.08)] overflow-hidden">
 
-    <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl p-8">
-
-
-      <div className="text-center mb-8">
-
-        <h1 className="text-5xl font-bold text-green-700 mb-2">
-
-          💍 Wedding Booking
-
-        </h1>
-
-        <p className="text-lg text-gray-600">
-
-          Reserve the Party Plot for your Wedding at Sorath Resort
-
-        </p>
-
+      {/* ── Change #3: Hero Header ── */}
+      <div
+        className="relative h-[45vh] flex items-center justify-center"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0,0,0,.65), rgba(0,0,0,.65)), url(${lawnImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="text-center px-6">
+          <p className="uppercase tracking-[0.35em] text-[#D4AF37] mb-4">
+            Sorath Resort &amp; Party Lawns
+          </p>
+          <h1 className="font-serif text-5xl md:text-7xl font-bold mb-4">
+            Wedding Booking
+          </h1>
+          <p className="text-gray-300 max-w-2xl mx-auto">
+            Reserve our grand party lawn for unforgettable weddings and celebrations.
+          </p>
+        </div>
       </div>
 
-
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-6"
-      >
-
-
-        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 mb-8">
-
-          <h2 className="text-2xl font-bold text-green-700 mb-6 flex items-center gap-2">
-
-            👤 Customer Details
-
-          </h2>
-
-          <div className="grid md:grid-cols-2 gap-5">
-
-            {/* Full Name */}
-
-            <input
-
-              type="text"
-
-              name="customerName"
-
-              placeholder="Full Name"
-
-              value={formData.customerName}
-
-              onChange={handleChange}
-
-              required
-
-              className="border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 transition"
-
-            />
-
-            {/* Phone */}
-
-            <input
-
-              type="text"
-
-              name="phone"
-
-              placeholder="Phone Number"
-
-              value={formData.phone}
-
-              onChange={handleChange}
-
-              required
-
-              className="border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 transition"
-
-            />
-
-            {/* Email */}
-
-            <input
-
-              type="email"
-
-              name="email"
-
-              placeholder="Email Address"
-
-              value={formData.email}
-
-              onChange={handleChange}
-
-              required
-
-              className="border-2 border-gray-300 rounded-lg p-3 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 transition md:col-span-2"
-
-            />
-
-          </div>
-
-        </div>
-
-
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 mb-8">
-
-          <h2 className="text-2xl font-bold text-blue-700 mb-6 flex items-center gap-2">
-
-            📅 Wedding Dates
-
-          </h2>
-
-          <div className="grid md:grid-cols-2 gap-5">
-
-            {/* Start Date */}
-
-            <div>
-
-              <label className="block mb-2 font-semibold text-gray-700">
-
-                Start Date
-
-              </label>
-
-              <input
-
-                type="date"
-
-                min={new Date().toISOString().split("T")[0]}
-
-                name="startDate"
-
-                value={formData.startDate}
-
-                onChange={handleChange}
-
-                required
-
-                className="border-2 border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
-
-              />
-
-            </div>
-
-            {/* End Date */}
-
-            <div>
-
-              <label className="block mb-2 font-semibold text-gray-700">
-
-                End Date
-
-              </label>
-
-              <input
-
-                type="date"
-                
-                min={new Date().toISOString().split("T")[0]}
-
-                name="endDate"
-
-                value={formData.endDate}
-
-                onChange={handleChange}
-
-                required
-
-                className="border-2 border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
-
-              />
-
-            </div>
-
-          </div>
-
-        </div>
-        {/* ==========================================
-            WEDDING DURATION
-        ========================================== */}
-
-        {weddingDays > 0 && (
-
-          <div className="bg-gradient-to-r from-blue-100 to-blue-50 border-2 border-blue-400 rounded-2xl p-6 shadow-md">
-
-            <h3 className="text-lg font-bold text-blue-700 mb-2">
-
-              📆 Wedding Duration
-
-            </h3>
-
-            <p className="text-3xl font-bold text-blue-800">
-
-              {weddingDays} {weddingDays === 1 ? "Day" : "Days"}
-
-            </p>
-
-          </div>
-
-        )}
-        {/* ==========================================
-    WEDDING PACKAGE
-========================================== */}
-
-        <div className="mb-8">
-
-          <h2 className="text-2xl font-bold text-green-700 mb-6 flex items-center gap-2">
-
-            🎉 Wedding Package
-
-          </h2>
-
-          <div className="bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-400 rounded-2xl p-8 shadow-lg">
-
-            <div className="space-y-3">
-
-              <p className="text-lg font-semibold text-green-800">
-
-                ✨ Fully Air Conditioned Banquet Hall
-
-              </p>
-
-              <p className="text-lg font-semibold text-green-800">
-
-                👥 Capacity: 1000+ Guests
-
-              </p>
-
-              <p className="text-lg font-semibold text-green-800">
-
-                🏠 40 Luxury Villas Included
-
-              </p>
-
-            </div>
-
-            <p className="text-gray-700 mt-4 italic">
-
-              Every Wedding Booking automatically includes the entire Party Plot and all 40 Villas.
-
-            </p>
-
-          </div>
-
-        </div>
-
-{/* ==========================================
-    OPTIONAL SERVICES
-========================================== */}
-
-        <div className="mb-8">
-
-          <h2 className="text-2xl font-bold text-purple-700 mb-6 flex items-center gap-2">
-
-            ⭐ Optional Services
-
-          </h2>
-
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border-2 border-purple-300 p-6 space-y-6">
-
-            {/* Swimming Pool */}
-
-            <label className="flex items-center justify-between p-4 bg-white rounded-xl border-2 border-purple-200 cursor-pointer hover:border-purple-400 hover:shadow-md transition">
-
-              <div>
-
-                <h3 className="font-bold text-lg text-gray-800">
-
-                  🏊 Swimming Pool
-
-                </h3>
-
-                <p className="text-gray-600">
-
-                  Add Swimming Pool Access
-
-                </p>
-
-              </div>
-
-              <div className="flex items-center gap-4">
-
-                <span className="font-bold text-lg text-green-700">
-
-                  +₹25,000
-
-                </span>
-
-                <input
-
-                  type="checkbox"
-
-                  name="swimmingPool"
-
-                  checked={formData.swimmingPool}
-
-                  onChange={handleChange}
-
-                  className="w-6 h-6 cursor-pointer"
-
-                />
-
-              </div>
-
-            </label>
-
-            {/* Generator */}
-
-            <label className="flex items-center justify-between p-4 bg-white rounded-xl border-2 border-purple-200 cursor-pointer hover:border-purple-400 hover:shadow-md transition">
-
-              <div>
-
-                <h3 className="font-bold text-lg text-gray-800">
-
-                  🔌 Generator Backup
-
-                </h3>
-
-                <p className="text-gray-600">
-
-                  Backup during power failure
-
-                </p>
-
-              </div>
-
-              <div className="flex items-center gap-4">
-
-                <span className="font-bold text-lg text-green-700">
-
-                  +₹15,000
-
-                </span>
-
-                <input
-
-                  type="checkbox"
-
-                  name="generator"
-
-                  checked={formData.generator}
-
-                  onChange={handleChange}
-
-                  className="w-6 h-6 cursor-pointer"
-
-                />
-
-              </div>
-
-            </label>
-
-          </div>
-
-        </div>
-
-        {/* ==========================================
-            ESTIMATED AMOUNT
-        ========================================== */}
-
-        <div className="bg-yellow-50 border-2 border-yellow-400 rounded-2xl p-6 mb-8">
-
-          <p className="text-center text-gray-600 mb-2">Estimated Amount:</p>
-
-          <p className="text-center text-4xl font-bold text-green-700">
-
-            ₹ {calculateEstimate().toLocaleString('en-IN')}
-
-          </p>
-
-        </div>
-
-        {/* ==========================================
-            SUBMIT BUTTON
-        ========================================== */}
-
-        <div className="text-center">
-
-          <button
-
-            type="submit"
-
-            disabled={loading || weddingDays === 0}
-
-            className={`px-12 py-4 rounded-lg text-lg font-bold transition duration-300 shadow-lg ${
-              loading || weddingDays === 0
-                ? "bg-gray-400 cursor-not-allowed text-white"
-                : "bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white hover:shadow-xl transform hover:scale-105"
-            }`}
-
+      {/* ── Change #14: Statistics Strip ── */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-10 py-8 border-b border-[#D4AF37]/10">
+        {[
+          { value: "15,000", label: "sq.ft Lawn" },
+          { value: "2000+", label: "Guests" },
+          { value: "200+", label: "Parking Spots" },
+          { value: "40", label: "Villas Included" },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            className="bg-[#222222] rounded-2xl border border-[#D4AF37]/20 text-center p-8 hover:border-[#D4AF37] transition-all duration-300"
           >
+            <p className="font-serif text-3xl font-bold text-[#D4AF37]">{stat.value}</p>
+            <p className="text-gray-400 text-sm mt-1">{stat.label}</p>
+          </div>
+        ))}
+      </div>
 
-            {loading ? "🔄 Processing..." : "💍 Book Wedding"}
-
-          </button>
-
-          <p className="text-gray-500 text-sm mt-4">
-
-            ✨ You'll receive a confirmation email shortly
-
-          </p>
-
+      {/* ── Change #15: Venue Highlights ── */}
+      <div className="px-10 py-10 border-b border-[#D4AF37]/10">
+        <p className="uppercase tracking-[0.3em] text-[#D4AF37] text-sm mb-3">Our Venues</p>
+        <h2 className="font-serif text-4xl font-bold mb-2">Venue Highlights</h2>
+        <div className="w-24 h-1 bg-[#D4AF37] rounded-full mb-8" />
+        <div className="grid md:grid-cols-3 gap-6">
+          {[
+            {
+              img: lawnImage,
+              icon: "🌿",
+              title: "Party Lawn",
+              desc: "Sprawling open-air lawn spanning 15,000 sq.ft, perfect for grand ceremonies under the stars.",
+            },
+            {
+              img: banquetImage,
+              icon: "🏛",
+              title: "Banquet Hall",
+              desc: "Fully air-conditioned hall accommodating 1,000+ guests with state-of-the-art lighting and sound.",
+            },
+            {
+              img: poolImage,
+              icon: "🏊",
+              title: "Swimming Pool",
+              desc: "Stunning pool area available as an optional add-on for pool parties and pre-wedding festivities.",
+            },
+          ].map((venue) => (
+            <div
+              key={venue.title}
+              className="bg-[#222222] border border-[#D4AF37]/20 rounded-2xl overflow-hidden hover:border-[#D4AF37] hover:shadow-[0_0_25px_rgba(212,175,55,.15)] transition-all duration-300 group"
+            >
+              <div className="overflow-hidden h-44">
+                <img
+                  src={venue.img}
+                  alt={venue.title}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+              </div>
+              <div className="p-5">
+                <h3 className="font-serif text-xl font-bold text-white mb-2">
+                  {venue.icon} {venue.title}
+                </h3>
+                <p className="text-gray-400 text-sm leading-6">{venue.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
+      </div>
 
-      </form>
+      {/* ── Change #4: Form wrapper ── */}
+      <div className="p-10">
+        <form onSubmit={handleSubmit} className="space-y-8">
+
+          {/* ── Change #5: Customer Details ── */}
+          <div className="bg-[#222222] border border-[#D4AF37]/10 rounded-3xl p-6">
+            <h2 className="text-2xl font-bold text-[#D4AF37] mb-6 flex items-center gap-2">
+              👤 Customer Details
+            </h2>
+            <div className="grid md:grid-cols-2 gap-5">
+              <input
+                type="text"
+                name="customerName"
+                placeholder="Full Name"
+                value={formData.customerName}
+                onChange={handleChange}
+                required
+                className="w-full bg-[#2B2B2B] border border-gray-700 rounded-xl px-5 py-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all"
+              />
+              <input
+                type="text"
+                name="phone"
+                placeholder="Phone Number"
+                value={formData.phone}
+                onChange={handleChange}
+                required
+                className="w-full bg-[#2B2B2B] border border-gray-700 rounded-xl px-5 py-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all"
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className="w-full bg-[#2B2B2B] border border-gray-700 rounded-xl px-5 py-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all md:col-span-2"
+              />
+            </div>
+          </div>
+
+          {/* ── Change #6: Wedding Dates ── */}
+          <div className="bg-[#222222] border border-[#D4AF37]/10 rounded-3xl p-6">
+            <h2 className="text-2xl font-bold text-[#D4AF37] mb-6 flex items-center gap-2">
+              📅 Wedding Dates
+            </h2>
+            <div className="grid md:grid-cols-2 gap-5">
+              <div>
+                <label className="block mb-2 font-semibold text-gray-400">Start Date</label>
+                <input
+                  type="date"
+                  min={new Date().toISOString().split("T")[0]}
+                  name="startDate"
+                  value={formData.startDate}
+                  onChange={handleChange}
+                  required
+                  className="w-full bg-[#2B2B2B] border border-gray-700 rounded-xl px-5 py-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block mb-2 font-semibold text-gray-400">End Date</label>
+                <input
+                  type="date"
+                  min={new Date().toISOString().split("T")[0]}
+                  name="endDate"
+                  value={formData.endDate}
+                  onChange={handleChange}
+                  required
+                  className="w-full bg-[#2B2B2B] border border-gray-700 rounded-xl px-5 py-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* ── Change #8: Wedding Duration ── */}
+          {weddingDays > 0 && (
+            <div className="bg-[#222222] border border-[#D4AF37]/20 rounded-3xl p-6 shadow-md">
+              <h3 className="text-lg font-bold text-[#D4AF37] mb-2">📆 Wedding Duration</h3>
+              <p className="text-5xl font-bold text-white">
+                {weddingDays} {weddingDays === 1 ? "Day" : "Days"}
+              </p>
+            </div>
+          )}
+
+          {/* ── Change #9: Wedding Package ── */}
+          <div>
+            <h2 className="text-2xl font-bold text-[#D4AF37] mb-6 flex items-center gap-2">
+              🎉 Wedding Package
+            </h2>
+            <div className="bg-[#222222] border border-[#D4AF37]/20 rounded-3xl p-8 shadow-lg">
+              <div className="space-y-3">
+                <p className="text-lg font-semibold text-white">✨ Fully Air Conditioned Banquet Hall</p>
+                <p className="text-lg font-semibold text-white">👥 Capacity: 1000+ Guests</p>
+                <p className="text-lg font-semibold text-white">🏠 40 Luxury Villas Included</p>
+              </div>
+              <p className="text-gray-400 mt-4 italic">
+                Every Wedding Booking automatically includes the entire Party Plot and all 40 Villas.
+              </p>
+            </div>
+          </div>
+
+          {/* ── Change #10: Optional Services ── */}
+          <div>
+            <h2 className="text-2xl font-bold text-[#D4AF37] mb-6 flex items-center gap-2">
+              ⭐ Optional Services
+            </h2>
+            <div className="bg-[#222222] border border-[#D4AF37]/20 rounded-3xl p-6 space-y-4">
+              {/* Swimming Pool */}
+              <label className="flex items-center justify-between p-4 bg-[#2B2B2B] rounded-xl border border-[#D4AF37]/10 cursor-pointer hover:border-[#D4AF37] hover:shadow-[0_0_15px_rgba(212,175,55,.12)] transition-all">
+                <div>
+                  <h3 className="font-bold text-lg text-white">🏊 Swimming Pool</h3>
+                  <p className="text-gray-400">Add Swimming Pool Access</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="font-bold text-lg text-[#D4AF37]">+₹25,000</span>
+                  <input
+                    type="checkbox"
+                    name="swimmingPool"
+                    checked={formData.swimmingPool}
+                    onChange={handleChange}
+                    className="w-6 h-6 cursor-pointer accent-[#D4AF37]"
+                  />
+                </div>
+              </label>
+
+              {/* Generator */}
+              <label className="flex items-center justify-between p-4 bg-[#2B2B2B] rounded-xl border border-[#D4AF37]/10 cursor-pointer hover:border-[#D4AF37] hover:shadow-[0_0_15px_rgba(212,175,55,.12)] transition-all">
+                <div>
+                  <h3 className="font-bold text-lg text-white">🔌 Generator Backup</h3>
+                  <p className="text-gray-400">Backup during power failure</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="font-bold text-lg text-[#D4AF37]">+₹15,000</span>
+                  <input
+                    type="checkbox"
+                    name="generator"
+                    checked={formData.generator}
+                    onChange={handleChange}
+                    className="w-6 h-6 cursor-pointer accent-[#D4AF37]"
+                  />
+                </div>
+              </label>
+            </div>
+          </div>
+
+          {/* ── Changes #11: Estimated Amount ── */}
+          <div className="bg-[#222222] border border-[#D4AF37] rounded-3xl p-8 text-center">
+            <p className="text-gray-400 mb-2 uppercase tracking-widest text-sm">Estimated Amount</p>
+            <p className="text-5xl font-bold text-[#D4AF37]">
+              ₹ {calculateEstimate().toLocaleString("en-IN")}
+            </p>
+          </div>
+
+          {/* ── Change #12: Submit Button ── */}
+          <div className="text-center">
+            <button
+              type="submit"
+              disabled={loading || weddingDays === 0}
+              className={`w-full py-5 rounded-xl text-lg font-bold transition-all duration-300 ${
+                loading || weddingDays === 0
+                  ? "bg-gray-600 text-gray-300 cursor-not-allowed"
+                  : "bg-[#D4AF37] text-black hover:bg-[#c49b2c] hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(212,175,55,.35)] active:scale-95"
+              }`}
+            >
+              {loading ? "Processing..." : "BOOK WEDDING"}
+            </button>
+
+            {/* ── Change #13: Confirmation text ── */}
+            <p className="text-gray-400 text-sm mt-4">
+              ✨ You'll receive a confirmation email shortly
+            </p>
+          </div>
+
+        </form>
+      </div>
 
     </div>
-
   </div>
-
 );
 
 }

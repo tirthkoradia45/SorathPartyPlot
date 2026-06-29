@@ -1288,3 +1288,67 @@ margin:0 auto 10px;
 }
 
 }
+
+/* ==========================================
+   LUXURY CALENDAR
+========================================== */
+
+.luxury-calendar {
+  width: 100%;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 24px;
+  padding: 20px;
+  font-family: inherit;
+}
+
+.luxury-calendar button {
+  color: white;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.luxury-calendar button:hover {
+  background: #d4af37 !important;
+  color: black !important;
+}
+
+.luxury-calendar .react-calendar__navigation button {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.luxury-calendar .react-calendar__month-view__weekdays {
+  color: #d4af37;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.luxury-calendar .react-calendar__tile {
+  padding: 15px 10px;
+  border-radius: 12px;
+}
+
+.luxury-calendar .react-calendar__tile--active {
+  background: #d4af37 !important;
+  color: black !important;
+}
+
+.available-date {
+  background: #16a34a !important;
+  color: white !important;
+  border-radius: 50%;
+}
+
+.tentative-date {
+  background: #facc15 !important;
+  color: black !important;
+  border-radius: 50%;
+}
+
+.booked-date {
+  background: #dc2626 !important;
+  color: white !important;
+  border-radius: 50%;
+}

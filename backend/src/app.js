@@ -13,7 +13,8 @@ app.use(cors());
 // Import route handlers
 const villaRoutes = require("./routes/villaRoutes");  // Villa booking routes
 const bookingRoutes = require("./routes/bookingRoutes");  // Booking management routes
-const weddingBookingRoutes = require("./routes/weddingBookingRoutes"); // Wedding Booking routes
+const weddingBookingRoutes = require("./routes/weddingBookingRoutes");// Wedding Booking routes
+const calendarRoutes = require("./routes/calendarRoutes"); 
 
 /**
  * Test/Health Check Route
@@ -39,6 +40,8 @@ app.use("/api/villas", villaRoutes);
 app.use("/api/bookings", bookingRoutes);
 
 app.use("/api/wedding-bookings", weddingBookingRoutes);
+
+app.use("/api/calendar", calendarRoutes);
 
 // Export app so server.js can use it to start the server
 module.exports = app;
