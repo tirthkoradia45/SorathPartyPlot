@@ -1,738 +1,162 @@
-
 import { useEffect, useState } from "react";
-
-// Axios is used to make HTTP requests to the backend
 import axios from "axios";
 
-/**
-
- * ADMIN BOOKINGS PAGE
-
- * Features:
-
- * ✔ View all bookings
- * ✔ Search bookings by customer name
- * ✔ Filter bookings by booking status
- * ✔ View booking statistics
- * ✔ Confirm bookings
- * ✔ Cancel bookings
- * ✔ Delete bookings
- * ✔ Automatically refresh data after every action
- 
- */
-
 function AdminBookings() {
-
-  // Stores all bookings fetched from the backend
   const [bookings, setBookings] = useState([]);
-
-  // Stores the customer name entered in the search box
   const [searchTerm, setSearchTerm] = useState("");
-
-  // Stores the selected booking status
   const [statusFilter, setStatusFilter] = useState("All");
+  const [loading, setLoading] = useState(true);
 
-  // Sort option selected by admin
-   const [sortOption, setSortOption] = useState("Newest");
-
-  // API:
-  // GET /api/bookings
-
-  // This function loads every booking from MongoDB.
-
-  // It is called:
-  //
-  // • When page loads
-  // • After Confirm
-  // • After Cancel
-  // • After Delete
-  
   const fetchBookings = async () => {
-
     try {
-
-      const response = await axios.get(
-        "http://localhost:5000/api/bookings"
-      );
-
-      // Save bookings inside React State
+      const response = await axios.get("http://localhost:5000/api/bookings");
       setBookings(response.data);
-
     } catch (error) {
-
-      console.log(error);
-
+      console.error(error);
+      alert("Failed to load bookings.");
+    } finally {
+      setLoading(false);
     }
-
   };
 
-
-  useEffect(() => {
-
-    fetchBookings();
-
-  }, []);
-
-  // API:
-  // PATCH /api/bookings/:id
-
-  // Used to:
-
-  // Pending  → Confirmed
-  // Pending  → Cancelled
-  // Confirmed → Cancelled
-  // Cancelled → Confirmed
-const updateStatus = async (bookingId, status) => {
-
+  const updateStatus = async (bookingId, status) => {
     try {
-
-      await axios.patch(
-
-        `http://localhost:5000/api/bookings/${bookingId}`,
-
-        {
-          status
-        }
-
-      );
-
-      alert("Booking Status Updated Successfully");
-
-      // Reload latest bookings
+      await axios.patch(`http://localhost:5000/api/bookings/${bookingId}`, { status });
+      alert("Booking status updated.");
       fetchBookings();
-
     } catch (error) {
-
-      console.log(error);
-
-      alert("Failed to update booking");
-
+      console.error(error);
+      alert("Failed to update booking status.");
     }
-
   };
-
-  // API:
-  // DELETE /api/bookings/:id
-  //
-  // Steps:
-  //
-  // Admin clicks Delete
-  //        ↓
-  // Confirmation Popup
-  //        ↓
-  // Delete Booking
-  //        ↓
-  // Reload Dashboard
-  
 
   const deleteBooking = async (bookingId) => {
-
-    const confirmDelete = window.confirm(
-
-      "Are you sure you want to delete this booking?"
-
-    );
-
-    if (!confirmDelete) {
-
-      return;
-
-    }
+    const confirmed = window.confirm("Delete this booking?");
+    if (!confirmed) return;
 
     try {
-
-      await axios.delete(
-
-        `http://localhost:5000/api/bookings/${bookingId}`
-
-      );
-
-      alert("Booking Deleted Successfully");
-
+      await axios.delete(`http://localhost:5000/api/bookings/${bookingId}`);
+      alert("Booking deleted.");
       fetchBookings();
-
     } catch (error) {
-
-      console.log(error);
-
-      alert("Failed to delete booking");
-
+      console.error(error);
+      alert("Failed to delete booking.");
     }
-
   };
 
-const filteredBookings = bookings
+  useEffect(() => {
+    fetchBookings();
+  }, []);
 
-  .filter((booking) => {
-
+  const filteredBookings = bookings.filter((booking) => {
     const matchesSearch = booking.customerName
-
       .toLowerCase()
-
       .includes(searchTerm.toLowerCase());
 
     const matchesStatus =
-
-      statusFilter === "All"
-
-        ? true
-
-        : booking.status === statusFilter;
+      statusFilter === "All" ? true : booking.status === statusFilter;
 
     return matchesSearch && matchesStatus;
-
-  })
-
-  .sort((a, b) => {
-
-    if (sortOption === "Newest") {
-
-      return new Date(b.createdAt) - new Date(a.createdAt);
-
-    }
-
-    if (sortOption === "Oldest") {
-
-      return new Date(a.createdAt) - new Date(b.createdAt);
-
-    }
-
-    if (sortOption === "Check In") {
-
-      return new Date(a.checkInDate) - new Date(b.checkInDate);
-
-    }
-
-    return 0;
-
   });
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#111111] flex items-center justify-center">
+        <div className="w-20 h-20 rounded-full border-4 border-[#D4AF37] border-t-transparent animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
-
-    <div className="p-8">
-
-
-      <div className="flex justify-between items-center mb-8">
-
-        <div>
-
-          <h1 className="text-4xl font-bold text-green-700">
-
-            Admin Dashboard
-
-          </h1>
-
-          <p className="text-gray-500">
-
-            Manage all villa bookings
-
+    <div className="min-h-screen bg-[#111111] text-white px-6 py-10">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-10">
+          <p className="uppercase tracking-[0.35em] text-[#D4AF37] mb-3">Sorath Resort</p>
+          <h1 className="text-5xl font-serif font-bold mb-4">Admin Bookings</h1>
+          <p className="text-gray-400 max-w-3xl">
+            Manage villa reservations, update booking status, and remove invalid entries from the system.
           </p>
-
         </div>
 
-      </div>
-
-
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
-
-        {/* Search Customer */}
-
-        <div className="flex-1">
-
+        <div className="grid gap-4 sm:grid-cols-[1fr_220px] mb-8">
           <input
-
+            className="rounded-3xl border border-[#D4AF37]/20 bg-[#111111] px-5 py-3 text-white outline-none focus:border-[#D4AF37]"
             type="text"
-
-            placeholder="🔍 Search Customer..."
-
+            placeholder="Search by customer name"
             value={searchTerm}
-
-            onChange={(e) =>
-
-              setSearchTerm(e.target.value)
-
-            }
-
-            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-700"
-
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
 
-        </div>
-
-        {/* Status Filter */}
-
-        <div>
-
           <select
-
+            className="rounded-3xl border border-[#D4AF37]/20 bg-[#111111] px-5 py-3 text-white outline-none focus:border-[#D4AF37]"
             value={statusFilter}
-
-            onChange={(e) =>
-
-              setStatusFilter(e.target.value)
-
-            }
-
-            className="border border-gray-300 rounded-lg p-3"
-
+            onChange={(e) => setStatusFilter(e.target.value)}
           >
-
-            <option value="All">
-
-              All Status
-
-            </option>
-
-            <option value="Pending">
-
-              Pending
-
-            </option>
-
-            <option value="Confirmed">
-
-              Confirmed
-
-            </option>
-
-            <option value="Cancelled">
-
-              Cancelled
-
-            </option>
-
+            <option value="All">All Statuses</option>
+            <option value="Pending">Pending</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Cancelled">Cancelled</option>
           </select>
-
         </div>
 
-        {/* Sort Dropdown */}
-
-        <div>
-
-          <select
-
-            value={sortOption}
-
-            onChange={(e) =>
-
-              setSortOption(e.target.value)
-
-            }
-
-            className="border border-gray-300 rounded-lg p-3"
-
-          >
-
-            <option>
-
-              Newest
-
-            </option>
-
-            <option>
-
-              Oldest
-
-            </option>
-
-            <option>
-
-              Check In
-
-            </option>
-
-          </select>
-
-        </div>
-
-      </div>
-
-
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-
-        {/* Total Bookings */}
-
-        <div className="bg-blue-100 rounded-lg shadow p-5">
-
-          <h2 className="font-semibold text-lg">
-
-            Total Bookings
-
-          </h2>
-
-          <p className="text-3xl font-bold text-blue-700">
-
-            {bookings.length}
-
-          </p>
-
-        </div>
-
-        {/* Pending */}
-
-        <div className="bg-yellow-100 rounded-lg shadow p-5">
-
-          <h2 className="font-semibold text-lg">
-
-            Pending
-
-          </h2>
-
-          <p className="text-3xl font-bold text-yellow-700">
-
-            {
-
-              bookings.filter(
-
-                booking => booking.status === "Pending"
-
-              ).length
-
-            }
-
-          </p>
-
-        </div>
-
-        {/* Confirmed */}
-
-        <div className="bg-green-100 rounded-lg shadow p-5">
-
-          <h2 className="font-semibold text-lg">
-
-            Confirmed
-
-          </h2>
-
-          <p className="text-3xl font-bold text-green-700">
-
-            {
-
-              bookings.filter(
-
-                booking => booking.status === "Confirmed"
-
-              ).length
-
-            }
-
-          </p>
-
-        </div>
-
-        {/* Cancelled */}
-
-        <div className="bg-red-100 rounded-lg shadow p-5">
-
-          <h2 className="font-semibold text-lg">
-
-            Cancelled
-
-          </h2>
-
-          <p className="text-3xl font-bold text-red-700">
-
-            {
-
-              bookings.filter(
-
-                booking => booking.status === "Cancelled"
-
-              ).length
-
-            }
-
-          </p>
-
-        </div>
-
-      </div>
-
-
-      <div className="overflow-x-auto">
-
-        <table className="min-w-full border-collapse border border-gray-300">
-
-        <thead>
-
-          <tr className="bg-green-700 text-white">
-
-            <th className="border p-3">Customer</th>
-
-            <th className="border p-3">Villa</th>
-
-            <th className="border p-3">Villa Count</th>
-
-            <th className="border p-3">Check In</th>
-
-            <th className="border p-3">Check Out</th>
-
-            <th className="border p-3">Status</th>
-
-            <th className="border p-3">Actions</th>
-
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-
-          {filteredBookings.length === 0 ? (
-
-            <tr>
-
-              <td
-                colSpan="7"
-                className="text-center p-8 text-gray-500 text-lg"
-              >
-
-                No bookings found.
-
-              </td>
-
-            </tr>
-
-          ) : (
-
-            filteredBookings.map((booking) => (
-
-              <tr
-
-                key={booking._id}
-
-                className="even:bg-gray-50 hover:bg-green-50 transition"
-
-              >
-
-                <td className="border p-3">
-
-                  {booking.customerName}
-
-                </td>
-
-
-                <td className="border p-3">
-
-                  {booking.villaId?.name}
-
-                </td>
-
-                <td className="border p-3 text-center">
-
-                  {booking.villaCount}
-
-                </td>
-
-                <td className="border p-3">
-
-                  {
-
-                    new Date(
-
-                      booking.checkInDate
-
-                    ).toLocaleDateString(
-
-                      "en-IN",
-
-                      {
-
-                        day: "2-digit",
-
-                        month: "short",
-
-                        year: "numeric",
-
-                      }
-
-                    )
-
-                  }
-
-                </td>
-
-                <td className="border p-3">
-
-                  {
-
-                    new Date(
-
-                      booking.checkOutDate
-
-                    ).toLocaleDateString(
-
-                      "en-IN",
-
-                      {
-
-                        day: "2-digit",
-
-                        month: "short",
-
-                        year: "numeric",
-
-                      }
-
-                    )
-
-                  }
-
-                </td>
-
-                <td className="border p-3">
-
-                  {
-
-                    booking.status === "Pending" && (
-
-                      <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full font-semibold">
-
-                        Pending
-
-                      </span>
-
-                    )
-
-                  }
-
-                  {
-
-                    booking.status === "Confirmed" && (
-
-                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold">
-
-                        Confirmed
-
-                      </span>
-
-                    )
-
-                  }
-
-                  {
-
-                    booking.status === "Cancelled" && (
-
-                      <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full font-semibold">
-
-                        Cancelled
-
-                      </span>
-
-                    )
-
-                  }
-
-                </td>
-
-
-                <td className="border p-3">
-
-                  {/* Confirm Button */}
-
-                  {
-
-                    booking.status !== "Confirmed" && (
-
-                      <button
-
-                        onClick={() =>
-
-                          updateStatus(
-
-                            booking._id,
-
-                            "Confirmed"
-
-                          )
-
-                        }
-
-                        className="bg-green-600 hover:bg-green-700 transition text-white px-3 py-1 rounded mr-2"
-
-                      >
-
-                        Confirm
-
-                      </button>
-
-                    )
-
-                  }
-
-                  {/* Cancel Button */}
-
-                  {
-
-                    booking.status !== "Cancelled" && (
-
-                      <button
-
-                        onClick={() =>
-
-                          updateStatus(
-
-                            booking._id,
-
-                            "Cancelled"
-
-                          )
-
-                        }
-
-                        className="bg-red-600 hover:bg-red-700 transition text-white px-3 py-1 rounded mr-2"
-
-                      >
-
-                        Cancel
-
-                      </button>
-
-                    )
-
-                  }
-
-                  {/* Delete Button */}
-
-                  <button
-
-                    onClick={() =>
-
-                      deleteBooking(
-
-                        booking._id
-
-                      )
-
-                    }
-
-                    className="bg-gray-700 hover:bg-black transition text-white px-3 py-1 rounded"
-
-                  >
-
-                    Delete
-
-                  </button>
-
-                </td>
-
+        <div className="overflow-x-auto rounded-3xl border border-[#D4AF37]/20 bg-[#111111]/80">
+          <table className="min-w-full divide-y divide-[#D4AF37]/20 text-left text-sm">
+            <thead className="border-b border-[#D4AF37]/20 bg-[#111111] uppercase tracking-[0.18em] text-[#D4AF37]">
+              <tr>
+                <th className="px-5 py-4">Customer</th>
+                <th className="px-5 py-4">Villa</th>
+                <th className="px-5 py-4">Villas</th>
+                <th className="px-5 py-4">Dates</th>
+                <th className="px-5 py-4">Status</th>
+                <th className="px-5 py-4">Actions</th>
               </tr>
-
-            ))
-
-          )}
-
-        </tbody>
-
-      </table>
-
+            </thead>
+            <tbody className="divide-y divide-[#ffffff0d]">
+              {filteredBookings.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="px-5 py-8 text-center text-gray-400">
+                    No bookings found matching the current filters.
+                  </td>
+                </tr>
+              ) : (
+                filteredBookings.map((booking) => (
+                  <tr key={booking._id} className="hover:bg-white/5">
+                    <td className="px-5 py-4">{booking.customerName}</td>
+                    <td className="px-5 py-4">{booking.villaId?.name || "Unknown Villa"}</td>
+                    <td className="px-5 py-4">{booking.villaCount}</td>
+                    <td className="px-5 py-4">
+                      {new Date(booking.checkInDate).toLocaleDateString()} - {new Date(booking.checkOutDate).toLocaleDateString()}
+                    </td>
+                    <td className="px-5 py-4">{booking.status}</td>
+                    <td className="px-5 py-4 space-x-2">
+                      <button
+                        className="rounded-full border border-[#D4AF37] px-3 py-1 text-sm text-[#D4AF37] hover:bg-[#D4AF37]/10"
+                        onClick={() => updateStatus(booking._id, "Confirmed")}
+                      >
+                        Confirm
+                      </button>
+                      <button
+                        className="rounded-full border border-[#D4AF37] px-3 py-1 text-sm text-white hover:bg-[#D4AF37]/10"
+                        onClick={() => updateStatus(booking._id, "Cancelled")}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="rounded-full border border-red-500 px-3 py-1 text-sm text-red-400 hover:bg-red-500/10"
+                        onClick={() => deleteBooking(booking._id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-
     </div>
-
   );
-
 }
 
 export default AdminBookings;

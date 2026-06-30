@@ -10,6 +10,7 @@
   import AdminBookings from "./pages/AdminBookings"; 
   import AdminWeddingBookings from "./pages/AdminWeddingBooking";
   import CheckAvailability from "./pages/CheckAvailability";
+  import AdminDashboard from "./pages/AdminDashboard";
 
   /**
    * Main App Component
@@ -52,6 +53,10 @@
           <Route
             path="/admin"
             element={<AdminLogin />}
+          />
+          <Route
+            path="/admin/dashboard"
+            element={<AdminDashboard />}
           />
 
           {/* Admin Bookings */}
