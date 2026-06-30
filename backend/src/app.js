@@ -12,6 +12,7 @@ const bookingRoutes = require("./routes/bookingRoutes");
 const weddingBookingRoutes = require("./routes/weddingBookingRoutes");
 const checkAvailabilityRoutes = require("./routes/checkAvailabilityRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const adminAuthRoutes = require("./routes/adminAuthRoutes");
 
 /**
  * Test Route
@@ -28,5 +29,6 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/wedding-bookings", weddingBookingRoutes);
 app.use("/api/check-availability", checkAvailabilityRoutes);
 app.use("/api/admin/dashboard", dashboardRoutes);
+app.use("/api/admin", adminAuthRoutes);
 
 module.exports = app;

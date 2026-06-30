@@ -7,11 +7,13 @@ const {
   getDashboardData,
 } = require("../controllers/dashboardController");
 
+const { verifyAdmin } = require("../middleware/authMiddle");
+
 // ==========================================
 // Dashboard Route
 // GET /api/admin/dashboard
 // ==========================================
 
-router.get("/", getDashboardData);
+router.get("/", verifyAdmin, getDashboardData);
 
 module.exports = router;

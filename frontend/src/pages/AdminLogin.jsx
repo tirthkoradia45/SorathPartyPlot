@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { FaUserShield, FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +17,18 @@ function AdminLogin() {
   const [loading, setLoading] = useState(false);
 
   const [error, setError] = useState("");
+
+  useEffect(() => {
+
+  const token = localStorage.getItem("adminToken");
+
+  if (token) {
+
+    navigate("/admin/dashboard", { replace: true });
+
+  }
+
+}, [navigate]);
 
 const handleLogin = async (e) => {
 

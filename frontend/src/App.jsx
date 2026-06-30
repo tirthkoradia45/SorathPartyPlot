@@ -11,6 +11,7 @@
   import AdminWeddingBookings from "./pages/AdminWeddingBooking";
   import CheckAvailability from "./pages/CheckAvailability";
   import AdminDashboard from "./pages/AdminDashboard";
+  import ProtectedRoute from "./components/ProtectedRoute";
 
   /**
    * Main App Component
@@ -56,18 +57,29 @@
           />
           <Route
             path="/admin/dashboard"
-            element={<AdminDashboard />}
+            element={
+            <ProtectedRoute>
+            <AdminDashboard />
+            </ProtectedRoute>
+          }
           />
 
-          {/* Admin Bookings */}
-          <Route
-            path="/admin/bookings"
-            element={<AdminBookings />}
-          />
-          <Route
-            path="/admin/weddings"
-            element={<AdminWeddingBookings />}
-          />
+        <Route
+          path="/admin/bookings"
+          element={
+          <ProtectedRoute>
+          <AdminBookings />
+          </ProtectedRoute>
+        }
+       />
+         <Route
+          path="/admin/weddings"
+          element={
+          <ProtectedRoute>
+          <AdminWeddingBookings />
+          </ProtectedRoute>
+        }
+       />
 
           <Route
             path="/check-availability"

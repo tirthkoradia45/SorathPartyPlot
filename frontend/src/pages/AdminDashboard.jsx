@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {ResponsiveContainer,BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,} from "recharts";
+import { useNavigate } from "react-router-dom";
 function AdminDashboard() {
 
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
 
@@ -16,9 +18,14 @@ function AdminDashboard() {
 
     try {
 
-      const response = await axios.get(
-        "http://localhost:5000/api/admin/dashboard"
-      );
+     const token = localStorage.getItem("adminToken");
+     const response = await axios.get("http://localhost:5000/api/admin/dashboard",
+    {
+        headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+);
 
       setDashboard(response.data);
 
@@ -47,7 +54,15 @@ function AdminDashboard() {
     );
 
   }
+  const handleLogout = () => {
 
+  // Remove admin session
+  localStorage.removeItem("adminToken");
+
+  // Redirect to login page
+  navigate("/admin", { replace: true });
+
+  };
   return (
 
     <div className="min-h-screen bg-[#111111] text-white">
@@ -823,12 +838,7 @@ function AdminDashboard() {
             {/* Logout */}
 
             <button
-              onClick={() => {
-
-                localStorage.removeItem("adminToken");
-                window.location.href = "/admin";
-
-              }}
+             onClick={handleLogout}
               className="bg-[#1A1A1A] border border-red-500/30 rounded-3xl p-8 hover:border-red-500 hover:-translate-y-2 hover:shadow-[0_0_35px_rgba(255,0,0,.15)] transition-all duration-300"
             >
 
