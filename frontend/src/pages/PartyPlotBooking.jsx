@@ -3,9 +3,11 @@ import axios from "axios";
 import lawnImage from "../assets/lawn.jpg";
 import banquetImage from "../assets/hall.jpg";
 import poolImage from "../assets/pool.jpg";
+import { useNavigate } from "react-router-dom";
 
 
 function PartyPlotBooking() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
 
@@ -122,125 +124,122 @@ function PartyPlotBooking() {
 
   const handleSubmit = async (e) => {
 
-    e.preventDefault();
+  e.preventDefault();
 
+  if (
+    !formData.customerName ||
+    !formData.phone ||
+    !formData.email ||
+    !formData.startDate ||
+    !formData.endDate
+  ) {
 
-    if (
+    alert("Please fill all required fields.");
 
-      !formData.customerName ||
+    return;
 
-      !formData.phone ||
+  }
 
-      !formData.email ||
+  if (
+    new Date(formData.endDate) <
+    new Date(formData.startDate)
+  ) {
 
-      !formData.startDate ||
+    alert("End Date cannot be before Start Date.");
 
-      !formData.endDate
+    return;
 
-    ) {
+  }
 
-      alert(
+  setLoading(true);
 
-        "Please fill all required fields."
+  try {
 
-      );
+    const response = await axios.post(
 
-      return;
+      "http://localhost:5000/api/wedding-bookings",
 
-    }
+      {
 
+        ...formData,
 
-    if (
+        estimatedAmount: calculateEstimate(),
 
-      new Date(formData.endDate) <
+      }
 
-      new Date(formData.startDate)
+    );
 
-    ) {
+    console.log(response.data);
 
-      alert(
+    // Redirect to Booking Success Page
+    navigate("/booking-success", {
 
-        "End Date cannot be before Start Date."
+      state: {
 
-      );
+        ...(response.data.booking || {}),
 
-      return;
+        customerName: formData.customerName,
 
-    }
+        phone: formData.phone,
 
-    setLoading(true);
+        email: formData.email,
 
-    try {
+        startDate: formData.startDate,
 
-      const response = await axios.post(
+        endDate: formData.endDate,
 
-        "http://localhost:5000/api/wedding-bookings",
+        estimatedAmount: calculateEstimate(),
 
-        {
+        status: "Pending",
 
-          ...formData,
+      },
 
-          estimatedAmount:
+    });
 
-            calculateEstimate(),
+    // Reset Form
+    setFormData({
 
-        }
+      customerName: "",
 
-      );
+      phone: "",
 
-      alert(
+      email: "",
 
-        "✅ Wedding Booking Created Successfully!"
+      startDate: "",
 
-      );
+      endDate: "",
 
-      console.log(response.data);
+      swimmingPool: false,
 
-      // Reset Form
+      generator: false,
 
-      setFormData({
+    });
 
-        customerName: "",
+    setWeddingDays(0);
 
-        phone: "",
+  }
 
-        email: "",
+  catch (error) {
 
-        startDate: "",
+    console.log(error);
 
-        endDate: "",
+    alert(
 
-        swimmingPool: false,
+      error.response?.data?.message ||
 
-        generator: false,
+      "Booking Failed"
 
-      });
+    );
 
-      setWeddingDays(0);
+  }
 
-    }
+  finally {
 
-    catch (error) {
+    setLoading(false);
 
-      console.log(error);
+  }
 
-      alert(
-
-        error.response?.data?.message ||
-
-        "Booking Failed"
-
-      );
-
-    }
-
-    finally {
-
-      setLoading(false);
-
-    }
-
-  };
+};
 
 return (
   <div className="min-h-screen bg-gradient-to-b from-[#0f0f0f] via-[#141414] to-[#111111] text-white py-16">

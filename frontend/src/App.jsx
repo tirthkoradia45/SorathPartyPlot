@@ -12,6 +12,7 @@
   import CheckAvailability from "./pages/CheckAvailability";
   import AdminDashboard from "./pages/AdminDashboard";
   import ProtectedRoute from "./components/ProtectedRoute";
+  import BookingSuccess from "./pages/BookingSuccess";
 
   /**
    * Main App Component
@@ -84,6 +85,10 @@
           <Route
             path="/check-availability"
             element={<CheckAvailability />}
+          />
+          <Route
+            path="/booking-success"
+            element={<BookingSuccess />}
           />
 
         </Routes>

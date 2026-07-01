@@ -1,15 +1,17 @@
 // Import React hooks for state and lifecycle management
 import { useEffect, useState } from "react";
 import villaImage from "../assets/villa.jpg";
+import { useNavigate } from "react-router-dom";
 
 // Import axios library for HTTP requests to the backend API
 import axios from "axios";
 
 
 function VillaBooking() {
-
+  const navigate = useNavigate();
   // Store the list of villas retrieved from backend
   const [villas, setVillas] = useState([]);
+  
 
   // Store availability details for the selected villa and date range
   const [availability, setAvailability] = useState(null);
@@ -111,60 +113,92 @@ function VillaBooking() {
   // ===============================
   // SUBMIT BOOKING
   // ===============================
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
 
-    e.preventDefault();
+  e.preventDefault();
 
-    // Frontend Validation
-    if (
-      availability &&
-      formData.villaCount >
-      availability.availableVillas
-    ) {
+  // Frontend Validation
+  if (
+    availability &&
+    formData.villaCount > availability.availableVillas
+  ) {
 
-      alert(
-        `Only ${availability.availableVillas} villas available`
-      );
+    alert(
+      `Only ${availability.availableVillas} villas available`
+    );
 
-      return;
+    return;
 
-    }
+  }
 
-    try {
+  try {
 
-      const response = await axios.post(
-        "http://localhost:5000/api/bookings",
-        formData
-      );
+    const response = await axios.post(
+      "http://localhost:5000/api/bookings",
+      formData
+    );
 
-      alert("Booking Created Successfully!");
+    console.log(response.data);
 
-      console.log(response.data);
+    // Redirect to Booking Success Page
+    navigate("/booking-success", {
 
-      setFormData({
-        customerName: "",
-        phone: "",
-        email: "",
-        villaId: "",
-        villaCount: 1,
-        checkInDate: "",
-        checkOutDate: "",
-      });
+      state: {
 
-      setAvailability(null);
+        ...(response.data.booking || {}),
 
-    } catch (error) {
+        customerName: formData.customerName,
 
-      console.log(error);
+        phone: formData.phone,
 
-      alert(
-        error.response?.data?.message ||
-        "Booking Failed"
-      );
+        email: formData.email,
 
-    }
+        checkInDate: formData.checkInDate,
 
-  };
+        checkOutDate: formData.checkOutDate,
+
+        status: "Pending",
+
+      },
+
+    });
+
+    // Reset Form
+    setFormData({
+
+      customerName: "",
+
+      phone: "",
+
+      email: "",
+
+      villaId: "",
+
+      villaCount: 1,
+
+      checkInDate: "",
+
+      checkOutDate: "",
+
+    });
+
+    setAvailability(null);
+
+  } catch (error) {
+
+    console.log(error);
+
+    alert(
+
+      error.response?.data?.message ||
+
+      "Booking Failed"
+
+    );
+
+  }
+
+};
 
   return (
   <div className="min-h-screen bg-gradient-to-b from-[#0f0f0f] via-[#141414] to-[#111111] text-white">

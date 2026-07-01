@@ -68,6 +68,8 @@ const weddingBookingSchema = new mongoose.Schema(
 
         "Cancelled",
 
+        "Completed",
+
       ],
 
       default: "Pending",
