@@ -1,13 +1,14 @@
 import { useState,useEffect } from "react";
 import { FaUserShield, FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import logo from "../assets/logo.png";
 
 function AdminLogin() {
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -22,13 +23,13 @@ function AdminLogin() {
 
   const token = localStorage.getItem("adminToken");
 
-  if (token) {
+  if (token && location.pathname === "/admin") {
 
     navigate("/admin/dashboard", { replace: true });
 
   }
 
-}, [navigate]);
+}, [navigate, location.pathname]);
 
 const handleLogin = async (e) => {
 

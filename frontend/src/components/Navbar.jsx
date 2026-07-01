@@ -301,7 +301,7 @@ function Navbar() {
           {/* ================= ADMIN BUTTON ================= */}
 
           <Link
-            to="/admin"
+            to="/admin/login"
             onClick={closeMenus}
             className="ml-6 border border-[#D4AF37]
                        text-[#D4AF37]
@@ -427,7 +427,7 @@ function Navbar() {
             <div className="border-t border-[#D4AF37]/20 my-4"></div>
 
             <Link
-              to="/admin"
+              to="/admin/login"
               onClick={closeMenus}
               className="mx-6 text-center border border-[#D4AF37]
                          text-[#D4AF37]
