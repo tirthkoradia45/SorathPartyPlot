@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
+import { buildApiUrl } from "../config/api";
 
 import heroImage from "../assets/hero.jpg";
 
@@ -32,7 +34,7 @@ const checkAvailability = async () => {
 
     if (!selectedDate) {
 
-        alert("Please select a date.");
+        toast("Please select a date.");
 
         return;
 
@@ -45,7 +47,7 @@ const checkAvailability = async () => {
         setResult(null);
 
         const response = await axios.get(
-            "http://localhost:5000/api/check-availability",
+            buildApiUrl("/api/check-availability"),
             {
                 params: {
                     type: bookingType,
@@ -58,12 +60,16 @@ const checkAvailability = async () => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
-        alert(
-            error.response?.data?.message ||
-            "Unable to check availability."
-        );
+        if (!error.response) {
+            toast.error("Unable to connect to the server. Please try again later.");
+        } else {
+            toast.error(
+                error.response?.data?.message ||
+                "Unable to check availability."
+            );
+        }
 
     } finally {
 
@@ -76,6 +82,7 @@ const checkAvailability = async () => {
     return (
 
         <div className="min-h-screen bg-[#111111] text-white">
+            <Toaster position="top-right" toastOptions={{duration: 3000, style: {background: "#1A1A1A", color: "#fff", border: "1px solid #D4AF37"}}} />
 
             {/* ==========================================
                 HERO SECTION

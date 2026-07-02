@@ -1,7 +1,9 @@
 import { useState,useEffect } from "react";
 import { FaUserShield, FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { useNavigate, useLocation } from "react-router-dom";
+import { buildApiUrl } from "../config/api";
 
 import logo from "../assets/logo.png";
 
@@ -35,39 +37,54 @@ const handleLogin = async (e) => {
 
   e.preventDefault();
 
+  if (!username.trim()) {
+    setError("Please enter your username.");
+    return;
+  }
+
+  if (!password.trim()) {
+    setError("Please enter your password.");
+    return;
+  }
+
   setLoading(true);
   setError("");
 
   try {
 
     const response = await axios.post(
-      "http://localhost:5000/api/admin/login",
+      buildApiUrl("/api/admin/login"),
       {
         username,
         password,
       }
     );
 
-    if (response.data.success) {
+  if (response.data.success) {
 
-      localStorage.setItem(
-        "adminToken",
-        response.data.token
-      );
+  toast.success("Login successful.");
 
-      navigate("/admin/dashboard");
+  localStorage.setItem(
+    "adminToken",
+    response.data.token
+  );
 
-    }
+  navigate("/admin/dashboard");
+
+}
 
   } catch (error) {
 
-    setError(
+    console.error(error);
 
-      error.response?.data?.message ||
-
-      "Invalid Username or Password"
-
-    );
+    if (!error.response) {
+      setError("Unable to connect to the server. Please try again later.");
+    } else {
+      setError(
+        error.response?.data?.message ||
+        "Login failed. Please try again."
+      );
+    }
 
   } finally {
 

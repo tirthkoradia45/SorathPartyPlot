@@ -12,9 +12,8 @@ async function seedAdmin() {
 
     console.log("MongoDB Connected");
 
-    // Change these whenever you want
-    const USERNAME = process.env.ADMIN_USERNAME;
-    const PASSWORD = process.env.ADMIN_PASSWORD;
+    const USERNAME = process.env.ADMIN_USERNAME || "admin";
+    const PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 
     // Hash password
     const hashedPassword = await bcrypt.hash(PASSWORD, 10);

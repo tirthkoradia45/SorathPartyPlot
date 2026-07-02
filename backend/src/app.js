@@ -3,8 +3,10 @@ const cors = require("cors");
 
 const app = express();
 
+const corsOrigin = process.env.CLIENT_URL || "http://localhost:5173";
+
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: corsOrigin, credentials: true }));
 
 // Import route handlers
 const villaRoutes = require("./routes/villaRoutes");

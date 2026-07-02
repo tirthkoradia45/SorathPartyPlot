@@ -1,16 +1,42 @@
+import { useState } from "react";
 import {
   FaMapMarkerAlt,
   FaPhoneAlt,
   FaEnvelope,
   FaDirections,
 } from "react-icons/fa";
+import toast, { Toaster } from "react-hot-toast";
 
 function ContactSection() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!formData.subject.trim()) {
+      toast.error("Please enter a subject.");
+      return;
+    }
+
+    toast.success("Thanks! Your message has been sent.");
+    setFormData({ name: "", email: "", subject: "", message: "" });
+  };
   return (
     <section
       id="contact"
       className="bg-[#111111] py-28 px-6"
     >
+      <Toaster position="top-right" toastOptions={{duration: 3000, style: {background: "#1A1A1A", color: "#fff", border: "1px solid #D4AF37"}}} />
       <div className="max-w-7xl mx-auto">
 
         {/* Heading */}
@@ -165,15 +191,63 @@ function ContactSection() {
 
           {/* Right */}
 
-          <div className="map-wrapper">
+          <div className="space-y-6">
+            <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-3xl p-6">
+              <h3 className="text-2xl font-serif font-semibold text-[#D4AF37] mb-4">
+                Send Us a Message
+              </h3>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Your Name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full bg-[#252525] border border-gray-700 rounded-xl px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20"
+                />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Your Email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full bg-[#252525] border border-gray-700 rounded-xl px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20"
+                />
+                <input
+                  type="text"
+                  name="subject"
+                  placeholder="Subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  className="w-full bg-[#252525] border border-gray-700 rounded-xl px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20"
+                />
+                <textarea
+                  name="message"
+                  placeholder="Your Message"
+                  rows="4"
+                  value={formData.message}
+                  onChange={handleChange}
+                  className="w-full bg-[#252525] border border-gray-700 rounded-xl px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20"
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-[#D4AF37] text-black font-semibold py-3 rounded-xl hover:bg-[#c49b2c] transition-all"
+                >
+                  Send Message
+                </button>
+              </form>
+            </div>
 
-            <iframe
-              title="Sorath Resort Map"
-              src="https://www.google.com/maps?q=Sorath+Resort+Party+Lawns+Junagadh&output=embed"
-              loading="lazy"
-              allowFullScreen
-            ></iframe>
+            <div className="map-wrapper">
 
+              <iframe
+                title="Sorath Resort Map"
+                src="https://www.google.com/maps?q=Sorath+Resort+Party+Lawns+Junagadh&output=embed"
+                loading="lazy"
+                allowFullScreen
+              ></iframe>
+
+            </div>
           </div>
 
         </div>

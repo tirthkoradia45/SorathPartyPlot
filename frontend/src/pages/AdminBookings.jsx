@@ -13,6 +13,8 @@ import {
 
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { buildApiUrl } from "../config/api";
 
 // ==========================================
 // STATUS OPTIONS
@@ -60,7 +62,7 @@ function AdminBookings() {
 
       const response = await axios.get(
 
-        "http://localhost:5000/api/bookings"
+        buildApiUrl("/api/bookings")
 
       );
 
@@ -68,13 +70,29 @@ function AdminBookings() {
 
     }
 
-    catch (error) {
+catch (error) {
 
-      console.log(error);
+  if (!error.response) {
 
-      toast.error("Failed to load bookings.");
+    toast.error(
+      "Unable to load data."
+    );
 
-    }
+  }
+
+  else {
+
+    toast.error(
+
+      error.response.data.message ||
+
+      "Failed to load data."
+
+    );
+
+  }
+
+}
 
     finally {
 
@@ -106,7 +124,7 @@ function AdminBookings() {
 
       await axios.patch(
 
-        `http://localhost:5000/api/bookings/${bookingId}`,
+        buildApiUrl(`/api/bookings/${bookingId}`),
 
         {
 
@@ -115,7 +133,7 @@ function AdminBookings() {
         }
 
       );
-      toast.success("Booking status updated successfully.");
+      toast.success("Booking status updated.");
 
       fetchBookings();
 
@@ -123,9 +141,27 @@ function AdminBookings() {
 
     catch (error) {
 
-      console.log(error);
+      console.error(error);
 
-      toast.error("Failed to update booking.");
+      if (!error.response) {
+
+        toast.error(
+          "Unable to connect to the server. Please try again later."
+        );
+
+      }
+
+      else {
+
+        toast.error(
+
+          error.response?.data?.message ||
+
+          "Unable to update booking status."
+
+        );
+
+      }
 
     }
 
@@ -141,7 +177,7 @@ function AdminBookings() {
 
       await axios.delete(
 
-        `http://localhost:5000/api/bookings/${selectedBookingId}`
+        buildApiUrl(`/api/bookings/${selectedBookingId}`)
 
       );
       toast.success("Booking deleted successfully.");
@@ -152,9 +188,27 @@ function AdminBookings() {
 
     catch (error) {
 
-      console.log(error);
+      console.error(error);
 
-      alert("Failed to delete booking.");
+      if (!error.response) {
+
+        toast.error(
+          "Unable to connect to the server. Please try again later."
+        );
+
+      }
+
+      else {
+
+        toast.error(
+
+          error.response?.data?.message ||
+
+          "Unable to delete the booking."
+
+        );
+
+      }
 
     }
 
@@ -268,17 +322,9 @@ function AdminBookings() {
 
   if (loading) {
 
-    return (
-
-      <div className="min-h-screen bg-[#111111] flex items-center justify-center">
-
-        <div className="w-20 h-20 rounded-full border-4 border-[#D4AF37] border-t-transparent animate-spin"></div>
-
-      </div>
-
-    );
-
+    return <LoadingSpinner/>
   }
+
 
   return (
 

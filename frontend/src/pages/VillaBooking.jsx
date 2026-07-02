@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 // Import axios library for HTTP requests to the backend API
 import axios from "axios";
-
+import toast, { Toaster } from "react-hot-toast";
+import { buildApiUrl } from "../config/api";
 
 function VillaBooking() {
   const navigate = useNavigate();
@@ -36,15 +37,14 @@ function VillaBooking() {
 
       try {
 
-        const response = await axios.get(
-          "http://localhost:5000/api/villas"
-        );
+        const response = await axios.get(buildApiUrl("/api/villas"));
 
         setVillas(response.data);
 
       } catch (error) {
 
-        console.log(error);
+        console.error(error);
+        toast.error("Unable to load villas. Please try again later.");
 
       }
 
@@ -88,13 +88,14 @@ function VillaBooking() {
 
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/bookings/availability?villaId=${formData.villaId}&checkInDate=${formData.checkInDate}&checkOutDate=${formData.checkOutDate}`
+        buildApiUrl(`/api/bookings/availability?villaId=${formData.villaId}&checkInDate=${formData.checkInDate}&checkOutDate=${formData.checkOutDate}`)
       );
 
       // save availability response in state for UI display and validation
       setAvailability(response.data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      toast.error("Unable to check availability right now.");
     }
   };
 
@@ -117,13 +118,55 @@ const handleSubmit = async (e) => {
 
   e.preventDefault();
 
+  if (!formData.customerName.trim()) {
+    toast.error("Please enter your full name.");
+    return;
+  }
+
+  if (!/^[0-9]{10}$/.test(formData.phone)) {
+    toast.error("Phone number must contain exactly 10 digits.");
+    return;
+  }
+
+  if (
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+  ) {
+    toast.error("Please enter a valid email address.");
+    return;
+  }
+
+  if (!formData.villaId) {
+    toast.error("Please select a villa.");
+    return;
+  }
+
+  if (formData.villaCount < 1) {
+    toast.error("Please select at least one villa.");
+    return;
+  }
+
+  if (!formData.checkInDate) {
+    toast.error("Please select a check-in date.");
+    return;
+  }
+
+  if (!formData.checkOutDate) {
+    toast.error("Please select a check-out date.");
+    return;
+  }
+
+  if (new Date(formData.checkOutDate) <= new Date(formData.checkInDate)) {
+    toast.error("Check-out date must be after the check-in date.");
+    return;
+  }
+
   // Frontend Validation
   if (
     availability &&
     formData.villaCount > availability.availableVillas
   ) {
 
-    alert(
+    toast.error(
       `Only ${availability.availableVillas} villas available`
     );
 
@@ -133,12 +176,24 @@ const handleSubmit = async (e) => {
 
   try {
 
+    const payload = {
+      customerName: formData.customerName.trim(),
+      phone: formData.phone.trim(),
+      email: formData.email.trim(),
+      villaId: formData.villaId,
+      villaCount: formData.villaCount,
+      checkInDate: formData.checkInDate,
+      checkOutDate: formData.checkOutDate,
+    };
+
     const response = await axios.post(
-      "http://localhost:5000/api/bookings",
-      formData
+      buildApiUrl("/api/bookings"),
+      payload
     );
 
     console.log(response.data);
+
+    toast.success("Villa booking created successfully.");
 
     // Redirect to Booking Success Page
     navigate("/booking-success", {
@@ -186,22 +241,33 @@ const handleSubmit = async (e) => {
 
   } catch (error) {
 
-    console.log(error);
+  if (!error.response) {
 
-    alert(
+    toast.error(
+      "Unable to connect to the server."
+    );
 
-      error.response?.data?.message ||
+  }
 
-      "Booking Failed"
+  else {
+
+    toast.error(
+
+      error.response.data.message ||
+
+      "Booking failed."
 
     );
 
   }
 
+}
+
 };
 
   return (
   <div className="min-h-screen bg-gradient-to-b from-[#0f0f0f] via-[#141414] to-[#111111] text-white">
+    <Toaster position="top-right" toastOptions={{duration: 3000, style: {background: "#1A1A1A", color: "#fff", border: "1px solid #D4AF37"}}} />
 
     {/* ── Hero ── */}
     <section

@@ -57,10 +57,10 @@ exports.loginAdmin = async (req, res) => {
         username: admin.username,
       },
 
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || "SorathResortJWTSecret123",
 
       {
-        expiresIn: "7d",
+        expiresIn: process.env.JWT_EXPIRE || "7d",
       }
 
     );

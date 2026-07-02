@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 import { Listbox } from "@headlessui/react";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 import {
   ChevronUpDownIcon,
@@ -11,6 +12,7 @@ import {
 } from "@heroicons/react/20/solid";
 
 import toast, { Toaster } from "react-hot-toast";
+import { buildApiUrl } from "../config/api";
 
 // ==========================================
 // STATUS OPTIONS
@@ -52,7 +54,7 @@ function WeddingBookingDashboard() {
     try {
 
       const response = await axios.get(
-        "http://localhost:5000/api/wedding-bookings"
+        buildApiUrl("/api/wedding-bookings")
       );
 
       setBookings(response.data);
@@ -61,9 +63,13 @@ function WeddingBookingDashboard() {
 
     catch (error) {
 
-      console.log(error);
+      console.error(error);
 
-      toast.error("Failed to load bookings.");
+      if (!error.response) {
+        toast.error("Unable to connect to the server. Please try again later.");
+      } else {
+        toast.error(error.response?.data?.message || "Something went wrong.");
+      }
 
     }
 
@@ -94,7 +100,7 @@ function WeddingBookingDashboard() {
 
       await axios.patch(
 
-        `http://localhost:5000/api/wedding-bookings/${bookingId}`,
+        buildApiUrl(`/api/wedding-bookings/${bookingId}`),
 
         {
           status,
@@ -103,7 +109,7 @@ function WeddingBookingDashboard() {
       );
 
       toast.success(
-        "Booking status updated successfully."
+        "Booking status updated."
       );
 
       fetchBookings();
@@ -112,11 +118,13 @@ function WeddingBookingDashboard() {
 
     catch (error) {
 
-      console.log(error);
+      console.error(error);
 
-      toast.error(
-        "Failed to update booking."
-      );
+      if (!error.response) {
+        toast.error("Unable to connect to the server. Please try again later.");
+      } else {
+        toast.error(error.response?.data?.message || "Unable to update booking status.");
+      }
 
     }
 
@@ -132,7 +140,7 @@ function WeddingBookingDashboard() {
 
       await axios.delete(
 
-        `http://localhost:5000/api/wedding-bookings/${selectedBookingId}`
+        buildApiUrl(`/api/wedding-bookings/${selectedBookingId}`)
 
       );
 
@@ -146,11 +154,13 @@ function WeddingBookingDashboard() {
 
     catch (error) {
 
-      console.log(error);
+      console.error(error);
 
-      toast.error(
-        "Failed to delete booking."
-      );
+      if (!error.response) {
+        toast.error("Unable to connect to the server. Please try again later.");
+      } else {
+        toast.error(error.response?.data?.message || "Unable to delete the booking.");
+      }
 
     }
 
@@ -249,19 +259,11 @@ function WeddingBookingDashboard() {
   // LOADING
   // ==========================================
 
-  if (loading) {
+if (loading) {
 
-    return (
+  return <LoadingSpinner />;
 
-      <div className="min-h-screen bg-[#111111] flex items-center justify-center">
-
-        <div className="w-20 h-20 rounded-full border-4 border-[#D4AF37] border-t-transparent animate-spin"></div>
-
-      </div>
-
-    );
-
-  }
+}
 
   return (
 

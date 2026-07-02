@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import {ResponsiveContainer,BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,} from "recharts";
 import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { buildApiUrl } from "../config/api";
 function AdminDashboard() {
 
   const [dashboard, setDashboard] = useState(null);
@@ -19,7 +22,7 @@ function AdminDashboard() {
     try {
 
      const token = localStorage.getItem("adminToken");
-     const response = await axios.get("http://localhost:5000/api/admin/dashboard",
+     const response = await axios.get(buildApiUrl("/api/admin/dashboard"),
     {
         headers: {
         Authorization: `Bearer ${token}`,
@@ -31,9 +34,27 @@ function AdminDashboard() {
 
     } catch (error) {
 
-      console.log(error);
+  if (!error.response) {
 
-    } finally {
+    toast.error(
+      "Unable to load data."
+    );
+
+  }
+
+  else {
+
+    toast.error(
+
+      error.response.data.message ||
+
+      "Failed to load data."
+
+    );
+
+  }
+
+} finally {
 
       setLoading(false);
 
@@ -43,17 +64,9 @@ function AdminDashboard() {
 
   if (loading) {
 
-    return (
+  return <LoadingSpinner />;
 
-      <div className="min-h-screen bg-[#111111] flex items-center justify-center">
-
-        <div className="w-20 h-20 rounded-full border-4 border-[#D4AF37] border-t-transparent animate-spin"></div>
-
-      </div>
-
-    );
-
-  }
+}
   const handleLogout = () => {
 
   // Remove admin session
@@ -66,6 +79,7 @@ function AdminDashboard() {
   return (
 
     <div className="min-h-screen bg-[#111111] text-white">
+      <Toaster position="top-right" toastOptions={{duration: 3000, style: {background: "#1A1A1A", color: "#fff", border: "1px solid #D4AF37"}}} />
 
       {/* ==========================================
           HERO

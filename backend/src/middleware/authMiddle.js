@@ -18,7 +18,7 @@ exports.verifyAdmin = (req, res, next) => {
 
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET || "SorathResortJWTSecret123"
     );
 
     req.admin = decoded;

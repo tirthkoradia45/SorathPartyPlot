@@ -4,6 +4,8 @@ import lawnImage from "../assets/lawn.jpg";
 import banquetImage from "../assets/hall.jpg";
 import poolImage from "../assets/pool.jpg";
 import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
+import { buildApiUrl } from "../config/api";
 
 
 function PartyPlotBooking() {
@@ -126,26 +128,43 @@ function PartyPlotBooking() {
 
   e.preventDefault();
 
+  if (!formData.customerName.trim()) {
+    toast.error("Please enter your full name.");
+    return;
+  }
+
+  if (!/^[0-9]{10}$/.test(formData.phone)) {
+    toast.error("Phone number must contain exactly 10 digits.");
+    return;
+  }
+
   if (
-    !formData.customerName ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+  ) {
+    toast.error("Please enter a valid email address.");
+    return;
+  }
+
+  if (
+    !formData.customerName.trim() ||
     !formData.phone ||
     !formData.email ||
     !formData.startDate ||
     !formData.endDate
   ) {
 
-    alert("Please fill all required fields.");
+    toast("Please fill all fields");
 
     return;
 
   }
 
   if (
-    new Date(formData.endDate) <
+    new Date(formData.endDate) <=
     new Date(formData.startDate)
   ) {
 
-    alert("End Date cannot be before Start Date.");
+    toast.error("End date must be after the start date.");
 
     return;
 
@@ -155,21 +174,28 @@ function PartyPlotBooking() {
 
   try {
 
+    const payload = {
+      customerName: formData.customerName.trim(),
+      phone: formData.phone.trim(),
+      email: formData.email.trim(),
+      startDate: formData.startDate,
+      endDate: formData.endDate,
+      swimmingPool: formData.swimmingPool,
+      generator: formData.generator,
+      estimatedAmount: calculateEstimate(),
+    };
+
     const response = await axios.post(
 
-      "http://localhost:5000/api/wedding-bookings",
+      buildApiUrl("/api/wedding-bookings"),
 
-      {
-
-        ...formData,
-
-        estimatedAmount: calculateEstimate(),
-
-      }
+      payload
 
     );
 
     console.log(response.data);
+
+    toast.success("Wedding booking created successfully.");
 
     // Redirect to Booking Success Page
     navigate("/booking-success", {
@@ -219,19 +245,29 @@ function PartyPlotBooking() {
 
   }
 
-  catch (error) {
+catch (error) {
 
-    console.log(error);
+  if (!error.response) {
 
-    alert(
+    toast.error(
+      "Unable to connect to the server."
+    );
 
-      error.response?.data?.message ||
+  }
 
-      "Booking Failed"
+  else {
+
+    toast.error(
+
+      error.response.data.message ||
+
+      "Booking failed."
 
     );
 
   }
+
+}
 
   finally {
 
@@ -243,6 +279,7 @@ function PartyPlotBooking() {
 
 return (
   <div className="min-h-screen bg-gradient-to-b from-[#0f0f0f] via-[#141414] to-[#111111] text-white py-16">
+    <Toaster position="top-right" toastOptions={{duration: 3000, style: {background: "#1A1A1A", color: "#fff", border: "1px solid #D4AF37"}}} />
 
     <div className="max-w-6xl mx-auto bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-3xl shadow-[0_0_40px_rgba(212,175,55,.08)] overflow-hidden">
 
@@ -497,7 +534,21 @@ return (
                   : "bg-[#D4AF37] text-black hover:bg-[#c49b2c] hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(212,175,55,.35)] active:scale-95"
               }`}
             >
-              {loading ? "Processing..." : "BOOK WEDDING"}
+            {loading ? (
+
+  <div className="flex items-center justify-center gap-3">
+
+    <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+
+    <span>Processing...</span>
+
+  </div>
+
+) : (
+
+  "BOOK WEDDING"
+
+)}
             </button>
 
             {/* ── Change #13: Confirmation text ── */}
