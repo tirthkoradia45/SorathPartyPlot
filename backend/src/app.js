@@ -9,6 +9,7 @@ const allowedOrigins = (process.env.CLIENT_URL || process.env.CLIENT_ORIGINS || 
   .filter(Boolean);
 
 app.use(express.json());
+app.disable("x-powered-by");
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -25,7 +26,9 @@ app.use(
         return callback(null, true);
       }
 
-      return callback(null, false);
+      return callback(
+      new Error("CORS policy: Origin not allowed.")
+    );
     },
     credentials: true,
   })
