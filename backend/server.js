@@ -16,6 +16,7 @@ const Villa = require("./src/models/Villa");
 
 // Get server port from environment variables or use default 5000
 const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || "0.0.0.0";
 
 const ensureDefaultVilla = async () => {
   const count = await Villa.countDocuments();
@@ -41,8 +42,8 @@ const ensureDefaultVilla = async () => {
 connectDB()
   .then(async () => {
     await ensureDefaultVilla();
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+    app.listen(PORT, HOST, () => {
+      console.log(`Server running on http://${HOST}:${PORT}`);
     });
   })
   .catch((error) => {
