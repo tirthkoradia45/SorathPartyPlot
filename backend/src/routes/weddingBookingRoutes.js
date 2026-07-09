@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { verifyAdmin } = require("../middleware/authMiddle");
 const {
     getAllWeddingBookings,
     createWeddingBooking,
@@ -7,52 +8,12 @@ const {
     deleteWeddingBooking
 } = require("../controllers/weddingBookingController");
 
+router.get("/", verifyAdmin, getAllWeddingBookings);
 
-// ROUTES
-/** GET ALL WEDDING BOOKINGS
- * GET /api/wedding-bookings
- **/
-router.get(
+router.post("/",createWeddingBooking);
 
-  "/",
+router.patch("/:id", verifyAdmin, updateWeddingBookingStatus);
 
-  getAllWeddingBookings
-
-);
-
-/**
- CREATE NEW WEDDING BOOKING
-  * API:
- * POST /api/wedding-bookings
- */
-
-router.post(
-
-  "/",
-
-  createWeddingBooking
-
-);
-// Update Status
-
-router.patch(
-
-  "/:id",
-
-  updateWeddingStatus
-
-);
-
-// Delete Booking
-
-router.delete(
-
-  "/:id",
-
-  deleteWeddingBooking
-
-);
-
-// EXPORT ROUTER
+router.delete("/:id", verifyAdmin, deleteWeddingBooking);
 
 module.exports = router;

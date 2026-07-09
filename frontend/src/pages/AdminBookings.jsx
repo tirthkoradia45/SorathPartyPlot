@@ -1,25 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-
 import { Listbox } from "@headlessui/react";
-
-import {
-
-  ChevronUpDownIcon,
-
-  CheckIcon,
-
-} from "@heroicons/react/20/solid";
-
+import {ChevronUpDownIcon,CheckIcon,} from "@heroicons/react/20/solid";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { buildApiUrl } from "../config/api";
 
-// ==========================================
 // STATUS OPTIONS
-// ==========================================
-
 const statusOptions = [
 
   "Pending",
@@ -36,71 +24,83 @@ function AdminBookings() {
 
   const navigate = useNavigate();
 
-  // ==========================================
   // STATES
-  // ==========================================
-
   const [bookings, setBookings] = useState([]);
-
   const [loading, setLoading] = useState(true);
-
   const [searchTerm, setSearchTerm] = useState("");
-
   const [statusFilter, setStatusFilter] = useState("All");
-
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
   const [selectedBookingId, setSelectedBookingId] = useState(null);
-
-  // ==========================================
   // FETCH BOOKINGS
-  // ==========================================
-
   const fetchBookings = async () => {
 
-    try {
+  try {
 
-      const response = await axios.get(
+    const token = localStorage.getItem("adminToken");
 
-        buildApiUrl("/api/bookings")
+    if (!token) {
+
+      navigate("/admin");
+
+      return;
+
+    }
+
+    const response = await axios.get(
+
+      buildApiUrl("/api/bookings"),
+
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+
+    );
+
+    setBookings(response.data);
+
+  }
+
+  catch (error) {
+
+    if (!error.response) {
+
+      toast.error("Unable to load data.");
+
+    }
+
+    else if (error.response.status === 401) {
+
+      localStorage.removeItem("adminToken");
+
+      navigate("/admin");
+
+      return;
+
+    }
+
+    else {
+
+      toast.error(
+
+        error.response.data.message ||
+
+        "Failed to load data."
 
       );
 
-      setBookings(response.data);
-
     }
-
-catch (error) {
-
-  if (!error.response) {
-
-    toast.error(
-      "Unable to load data."
-    );
 
   }
 
-  else {
+  finally {
 
-    toast.error(
-
-      error.response.data.message ||
-
-      "Failed to load data."
-
-    );
+    setLoading(false);
 
   }
 
-}
-
-    finally {
-
-      setLoading(false);
-
-    }
-
-  };
+};
 
   useEffect(() => {
 
@@ -108,123 +108,181 @@ catch (error) {
 
   }, []);
 
-  // ==========================================
   // UPDATE STATUS
-  // ==========================================
 
-  const updateStatus = async (
 
-    bookingId,
+const updateStatus = async (
 
-    status
+  bookingId,
 
-  ) => {
+  status
 
-    try {
+) => {
 
-      await axios.patch(
+  try {
 
-        buildApiUrl(`/api/bookings/${bookingId}`),
+    const token = localStorage.getItem("adminToken");
 
-        {
+    if (!token) {
 
-          status,
+      navigate("/admin");
 
-        }
+      return;
+
+    }
+
+    await axios.patch(
+
+      buildApiUrl(`/api/bookings/${bookingId}`),
+
+      {
+
+        status,
+
+      },
+
+      {
+
+        headers: {
+
+          Authorization: `Bearer ${token}`,
+
+        },
+
+      }
+
+    );
+
+    toast.success("Booking status updated.");
+
+    fetchBookings();
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    if (!error.response) {
+
+      toast.error(
+        "Unable to connect to the server. Please try again later."
+      );
+
+    }
+
+    else if (error.response.status === 401) {
+
+      localStorage.removeItem("adminToken");
+
+      navigate("/admin");
+
+      return;
+
+    }
+
+    else {
+
+      toast.error(
+
+        error.response?.data?.message ||
+
+        "Unable to update booking status."
 
       );
-      toast.success("Booking status updated.");
-
-      fetchBookings();
 
     }
 
-    catch (error) {
+  }
 
-      console.error(error);
+};
 
-      if (!error.response) {
+// DELETE BOOKING
 
-        toast.error(
-          "Unable to connect to the server. Please try again later."
-        );
+const confirmDelete = async () => {
 
-      }
+  try {
 
-      else {
+    const token = localStorage.getItem("adminToken");
 
-        toast.error(
+    if (!token) {
 
-          error.response?.data?.message ||
+      navigate("/admin");
 
-          "Unable to update booking status."
-
-        );
-
-      }
+      return;
 
     }
 
-  };
+    await axios.delete(
 
-  // ==========================================
-  // DELETE BOOKING
-  // ==========================================
+      buildApiUrl(`/api/bookings/${selectedBookingId}`),
 
-  const confirmDelete = async () => {
+      {
 
-    try {
+        headers: {
 
-      await axios.delete(
+          Authorization: `Bearer ${token}`,
 
-        buildApiUrl(`/api/bookings/${selectedBookingId}`)
+        },
+
+      }
+
+    );
+
+    toast.success("Booking deleted successfully.");
+
+    fetchBookings();
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    if (!error.response) {
+
+      toast.error(
+        "Unable to connect to the server. Please try again later."
+      );
+
+    }
+
+    else if (error.response.status === 401) {
+
+      localStorage.removeItem("adminToken");
+
+      navigate("/admin");
+
+      return;
+
+    }
+
+    else {
+
+      toast.error(
+
+        error.response?.data?.message ||
+
+        "Unable to delete the booking."
 
       );
-      toast.success("Booking deleted successfully.");
-
-      fetchBookings();
 
     }
 
-    catch (error) {
+  }
 
-      console.error(error);
+  finally {
 
-      if (!error.response) {
+    setShowDeleteModal(false);
 
-        toast.error(
-          "Unable to connect to the server. Please try again later."
-        );
+    setSelectedBookingId(null);
 
-      }
+  }
 
-      else {
+};
 
-        toast.error(
+// SEARCH + FILTER
 
-          error.response?.data?.message ||
-
-          "Unable to delete the booking."
-
-        );
-
-      }
-
-    }
-
-    finally {
-
-      setShowDeleteModal(false);
-
-      setSelectedBookingId(null);
-
-    }
-
-  };
-
-  // ==========================================
-  // SEARCH + FILTER
-  // ==========================================
 
   const filteredBookings = bookings.filter(
 
@@ -278,9 +336,8 @@ catch (error) {
 
   );
 
-  // ==========================================
-  // STATISTICS
-  // ==========================================
+// STATISTICS
+
 
   const totalBookings = bookings.length;
 
@@ -329,9 +386,7 @@ catch (error) {
   return (
 
     <div className="min-h-screen bg-[#111111] text-white">
-            {/* ==========================================
-                  HERO SECTION
-      ========================================== */}
+
       <Toaster position="top-right" toastOptions={{duration: 3000,style: {background:"#1A1A1A",color: "#fff",border: "1px solid #D4AF37",},
     }}
     />
@@ -364,15 +419,9 @@ catch (error) {
 
       </section>
 
-      {/* ==========================================
-                  MAIN CONTAINER
-      ========================================== */}
 
       <div className="max-w-7xl mx-auto px-8 py-12">
 
-        {/* ==========================================
-                    SEARCH & FILTER
-        ========================================== */}
 
         <div className="grid lg:grid-cols-2 gap-6 mb-10">
 
@@ -469,9 +518,6 @@ catch (error) {
 
         </div>
 
-        {/* ==========================================
-                    STATISTICS
-        ========================================== */}
 
         <div className="grid sm:grid-cols-2 xl:grid-cols-5 gap-6 mb-14">
 
@@ -981,9 +1027,6 @@ catch (error) {
 
         </div>
 
-        {/* ==========================================
-                    PAGE FOOTER
-        ========================================== */}
 
         <div className="mt-12 flex flex-col md:flex-row justify-between items-center gap-6">
 
@@ -1025,10 +1068,6 @@ catch (error) {
 
         </div>
 
-        {/* ==========================================
-                    COPYRIGHT
-        ========================================== */}
-
         <div className="border-t border-[#D4AF37]/20 mt-16 pt-8 text-center">
 
           <p className="text-gray-500">
@@ -1046,10 +1085,6 @@ catch (error) {
         </div>
 
       </div>
-
-      {/* ==========================================
-              DELETE CONFIRMATION MODAL
-      ========================================== */}
 
       {showDeleteModal && (
 

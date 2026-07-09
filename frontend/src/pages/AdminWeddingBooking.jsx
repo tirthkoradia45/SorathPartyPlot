@@ -1,184 +1,274 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-
 import { useNavigate } from "react-router-dom";
-
 import { Listbox } from "@headlessui/react";
 import LoadingSpinner from "../components/LoadingSpinner";
-
-import {
-  ChevronUpDownIcon,
-  CheckIcon,
-} from "@heroicons/react/20/solid";
-
+import {ChevronUpDownIcon,CheckIcon,} from "@heroicons/react/20/solid";
 import toast, { Toaster } from "react-hot-toast";
 import { buildApiUrl } from "../config/api";
-
-// ==========================================
 // STATUS OPTIONS
-// ==========================================
-
 const statusOptions = [
   "Pending",
   "Confirmed",
   "Completed",
   "Cancelled",
 ];
-
 function WeddingBookingDashboard() {
-
   const navigate = useNavigate();
-
-  // ==========================================
   // STATES
-  // ==========================================
-
   const [bookings, setBookings] = useState([]);
-
   const [loading, setLoading] = useState(true);
-
   const [searchTerm, setSearchTerm] = useState("");
-
   const [statusFilter, setStatusFilter] = useState("All");
-
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
   const [selectedBookingId, setSelectedBookingId] = useState(null);
 
-  // ==========================================
   // FETCH BOOKINGS
-  // ==========================================
+const fetchBookings = async () => {
 
-  const fetchBookings = async () => {
+  try {
 
-    try {
+    const token = localStorage.getItem("adminToken");
 
-      const response = await axios.get(
-        buildApiUrl("/api/wedding-bookings")
-      );
+    if (!token) {
 
-      setBookings(response.data);
+      navigate("/admin");
+
+      return;
 
     }
 
-    catch (error) {
+    const response = await axios.get(
 
-      console.error(error);
+      buildApiUrl("/api/wedding-bookings"),
 
-      if (!error.response) {
-        toast.error("Unable to connect to the server. Please try again later.");
-      } else {
-        toast.error(error.response?.data?.message || "Something went wrong.");
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
 
+    );
+
+    setBookings(response.data);
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    if (!error.response) {
+
+      toast.error(
+        "Unable to connect to the server. Please try again later."
+      );
+
     }
 
-    finally {
+    else if (error.response.status === 401) {
 
-      setLoading(false);
+      localStorage.removeItem("adminToken");
+
+      navigate("/admin");
+
+      return;
 
     }
 
-  };
+    else {
+
+      toast.error(
+
+        error.response?.data?.message ||
+
+        "Something went wrong."
+
+      );
+
+    }
+
+  }
+
+  finally {
+
+    setLoading(false);
+
+  }
+
+};
 
   useEffect(() => {
 
     fetchBookings();
 
   }, []);
+// UPDATE STATUS
+const updateStatus = async (
+  bookingId,
+  status
+) => {
 
-  // ==========================================
-  // UPDATE STATUS
-  // ==========================================
+  try {
 
-  const updateStatus = async (
-    bookingId,
-    status
-  ) => {
+    const token = localStorage.getItem("adminToken");
 
-    try {
+    if (!token) {
 
-      await axios.patch(
+      navigate("/admin");
 
-        buildApiUrl(`/api/wedding-bookings/${bookingId}`),
-
-        {
-          status,
-        }
-
-      );
-
-      toast.success(
-        "Booking status updated."
-      );
-
-      fetchBookings();
+      return;
 
     }
 
-    catch (error) {
+    await axios.patch(
 
-      console.error(error);
+      buildApiUrl(`/api/wedding-bookings/${bookingId}`),
 
-      if (!error.response) {
-        toast.error("Unable to connect to the server. Please try again later.");
-      } else {
-        toast.error(error.response?.data?.message || "Unable to update booking status.");
+      {
+        status,
+      },
+
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
 
-    }
+    );
 
-  };
+    toast.success(
+      "Booking status updated."
+    );
 
-  // ==========================================
-  // DELETE BOOKING
-  // ==========================================
+    fetchBookings();
 
-  const confirmDelete = async () => {
+  }
 
-    try {
+  catch (error) {
 
-      await axios.delete(
+    console.error(error);
 
-        buildApiUrl(`/api/wedding-bookings/${selectedBookingId}`)
+    if (!error.response) {
 
+      toast.error(
+        "Unable to connect to the server. Please try again later."
       );
-
-      toast.success(
-        "Booking deleted successfully."
-      );
-
-      fetchBookings();
 
     }
 
-    catch (error) {
+    else if (error.response.status === 401) {
 
-      console.error(error);
+      localStorage.removeItem("adminToken");
 
-      if (!error.response) {
-        toast.error("Unable to connect to the server. Please try again later.");
-      } else {
-        toast.error(error.response?.data?.message || "Unable to delete the booking.");
+      navigate("/admin");
+
+      return;
+
+    }
+
+    else {
+
+      toast.error(
+
+        error.response?.data?.message ||
+
+        "Unable to update booking status."
+
+      );
+
+    }
+
+  }
+
+};
+
+// DELETE BOOKING
+const confirmDelete = async () => {
+
+  try {
+
+    const token = localStorage.getItem("adminToken");
+
+    if (!token) {
+
+      navigate("/admin");
+
+      return;
+
+    }
+
+    await axios.delete(
+
+      buildApiUrl(`/api/wedding-bookings/${selectedBookingId}`),
+
+      {
+
+        headers: {
+
+          Authorization: `Bearer ${token}`,
+
+        },
+
       }
 
+    );
+
+    toast.success(
+      "Booking deleted successfully."
+    );
+
+    fetchBookings();
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    if (!error.response) {
+
+      toast.error(
+        "Unable to connect to the server. Please try again later."
+      );
+
     }
 
-    finally {
+    else if (error.response.status === 401) {
 
-      setShowDeleteModal(false);
+      localStorage.removeItem("adminToken");
 
-      setSelectedBookingId(null);
+      navigate("/admin");
+
+      return;
 
     }
 
-  };
+    else {
 
-  // ==========================================
-  // SEARCH + FILTER
-  // ==========================================
+      toast.error(
 
-  const filteredBookings = bookings.filter(
+        error.response?.data?.message ||
+
+        "Unable to delete the booking."
+
+      );
+
+    }
+
+  }
+
+  finally {
+
+    setShowDeleteModal(false);
+
+    setSelectedBookingId(null);
+
+  }
+
+};
+// SEARCH + FILTER
+const filteredBookings = bookings.filter(
     (booking) => {
 
       const search = searchTerm.toLowerCase();
@@ -214,12 +304,8 @@ function WeddingBookingDashboard() {
     }
 
   );
-
-  // ==========================================
-  // STATISTICS
-  // ==========================================
-
-  const totalBookings = bookings.length;
+// STATISTICS
+const totalBookings = bookings.length;
 
   const pendingBookings = bookings.filter(
 
@@ -255,10 +341,7 @@ function WeddingBookingDashboard() {
 
   );
 
-  // ==========================================
-  // LOADING
-  // ==========================================
-
+// LOADING
 if (loading) {
 
   return <LoadingSpinner />;
@@ -290,12 +373,7 @@ if (loading) {
         }}
 
       />
-
-      {/* ==========================================
-                  HERO SECTION
-      ========================================== */}
-
-      <section className="border-b border-[#D4AF37]/20">
+     <section className="border-b border-[#D4AF37]/20">
 
         <div className="max-w-7xl mx-auto px-8 py-14">
 
@@ -323,13 +401,7 @@ if (loading) {
 
       </section>
 
-      {/* ==========================================
-                  MAIN CONTAINER
-      ========================================== */}
-
-      <div className="max-w-7xl mx-auto px-8 py-12">        {/* ==========================================
-                    SEARCH & FILTER
-        ========================================== */}
+      <div className="max-w-7xl mx-auto px-8 py-12">     
 
         <div className="grid lg:grid-cols-2 gap-6 mb-10">
 
@@ -577,14 +649,8 @@ if (loading) {
           </div>
 
         </div>
-
-        {/* ==========================================
-                    BOOKINGS TABLE
-        ========================================== */}
-
         <div className="bg-[#1A1A1A] rounded-3xl border border-[#D4AF37]/20 overflow-hidden shadow-2xl">
-
-          <div className="overflow-x-auto">
+        <div className="overflow-x-auto">
 
             <table className="w-full">
 
@@ -1001,9 +1067,7 @@ if (loading) {
 
           </div>
 
-        </div>        {/* ==========================================
-                    PAGE FOOTER
-        ========================================== */}
+        </div> 
 
         <div className="mt-12 flex flex-col md:flex-row justify-between items-center gap-6">
 
@@ -1048,10 +1112,7 @@ if (loading) {
           </button>
 
         </div>
-
-        {/* ==========================================
-                    COPYRIGHT
-        ========================================== */}
+]
 
         <div className="border-t border-[#D4AF37]/20 mt-16 pt-8 text-center">
 
@@ -1071,9 +1132,6 @@ if (loading) {
 
       </div>
 
-      {/* ==========================================
-              DELETE CONFIRMATION MODAL
-      ========================================== */}
 
       {showDeleteModal && (
 

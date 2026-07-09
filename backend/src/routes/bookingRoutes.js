@@ -2,7 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 
-// Import Controllers
+const { verifyAdmin } = require("../middleware/authMiddle");
 const {
     getAllBookings,
     createBooking,
@@ -11,21 +11,14 @@ const {
     deleteBooking
 } = require("../controllers/bookingController");
 
-// GET ALL BOOKINGS
-router.get("/", getAllBookings);
-
-// CHECK AVAILABILITY
+router.get("/", verifyAdmin, getAllBookings);
 
 router.get("/availability", checkAvailability);
 
-// CREATE BOOKING
 router.post("/", createBooking);
 
-// UPDATE BOOKING STATUS
+router.get("/", verifyAdmin, getAllBookings);
 
-router.patch("/:id", updateBookingStatus);
-
-// DELETE BOOKING
-router.delete("/:id", deleteBooking);
+router.delete("/:id", verifyAdmin, deleteBooking);
 
 module.exports = router;
