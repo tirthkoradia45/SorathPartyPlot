@@ -3,11 +3,7 @@ const cors = require("cors");
 
 const app = express();
 
-const allowedOrigins = (process.env.CLIENT_URL || process.env.CLIENT_ORIGINS || "http://localhost:5173,http://127.0.0.1:5173")
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-
+const allowedOrigins = (process.env.CLIENT_URL || process.env.CLIENT_ORIGINS || "http://localhost:5173,http://127.0.0.1:5173").split(",").map((origin) => origin.trim()).filter(Boolean);
 app.use(express.json());
 app.disable("x-powered-by");
 app.use(
@@ -38,7 +34,7 @@ app.use(
 const villaRoutes = require("./routes/villaRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const weddingBookingRoutes = require("./routes/weddingBookingRoutes");
-const checkAvailabilityRoutes = require("./routes/checkAvailabilityRoutes");
+const availabilityRoutes = require("./routes/availabilityRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const adminAuthRoutes = require("./routes/adminAuthRoutes");
 
@@ -55,7 +51,7 @@ app.get("/", (req, res) => {
 app.use("/api/villas", villaRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/wedding-bookings", weddingBookingRoutes);
-app.use("/api/check-availability", checkAvailabilityRoutes);
+app.use("/api/check-availability", availabilityRoutes);
 app.use("/api/admin/dashboard", dashboardRoutes);
 app.use("/api/admin", adminAuthRoutes);
 
