@@ -11,19 +11,23 @@ async function seedAdmin() {
     await mongoose.connect(process.env.MONGO_URI);
 
     console.log("MongoDB Connected");
-
-    const USERNAME = process.env.ADMIN_USERNAME || "admin";
-    const PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
+    const username = process.env.ADMIN_USERNAME;
+    const password = process.env.ADMIN_PASSWORD;
+    if (!username || !password) {
+      throw new Error(
+        "ADMIN_USERNAME and ADMIN_PASSWORD must be set."
+      );
+    }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(PASSWORD, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Check if any admin already exists
     let admin = await Admin.findOne();
 
     if (admin) {
 
-      admin.username = USERNAME;
+      admin.username = username;
       admin.password = hashedPassword;
 
       await admin.save();
@@ -34,7 +38,7 @@ async function seedAdmin() {
 
       admin = new Admin({
 
-        username: USERNAME,
+        username: username,
 
         password: hashedPassword,
 
@@ -46,16 +50,14 @@ async function seedAdmin() {
 
     }
 
-    console.log("--------------------------------");
-    console.log("Username :", USERNAME);
-    console.log("Password :", PASSWORD);
-    console.log("--------------------------------");
+    console.log("Username :", username);
+    console.log("Password :", password);
 
     process.exit();
 
   } catch (error) {
 
-    console.log(error);
+    console.error(error);
 
     process.exit();
 

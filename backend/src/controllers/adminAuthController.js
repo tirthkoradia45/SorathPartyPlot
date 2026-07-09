@@ -2,10 +2,7 @@ const Admin = require("../models/Admin");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// ==========================================
 // Admin Login
-// ==========================================
-
 exports.loginAdmin = async (req, res) => {
 
   try {
@@ -23,7 +20,7 @@ exports.loginAdmin = async (req, res) => {
     }
 
     // Find Admin
-    const admin = await Admin.findOne({ username });
+    const admin = await Admin.findOne({ username: username.trim() });
 
     if (!admin) {
 
@@ -48,6 +45,17 @@ exports.loginAdmin = async (req, res) => {
       });
 
     }
+    if (!process.env.JWT_SECRET) {
+
+    return res.status(500).json({
+
+        success: false,
+
+        message: "JWT secret is not configured."
+
+    });
+
+}
 
     // Generate JWT Token
     const token = jwt.sign(
@@ -57,10 +65,10 @@ exports.loginAdmin = async (req, res) => {
         username: admin.username,
       },
 
-      process.env.JWT_SECRET || "SorathResortJWTSecret123",
+      process.env.JWT_SECRET,
 
       {
-        expiresIn: process.env.JWT_EXPIRE || "7d",
+        expiresIn: process.env.JWT_EXPIRE,
       }
 
     );
@@ -84,13 +92,13 @@ exports.loginAdmin = async (req, res) => {
 
   } catch (error) {
 
-    console.log(error);
+    console.error(error);
 
     return res.status(500).json({
 
       success: false,
 
-      message: "Server Error",
+      message: "Internal Server Error",
 
     });
 
