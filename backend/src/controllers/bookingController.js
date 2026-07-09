@@ -1,76 +1,45 @@
-
-const mongoose = require("mongoose");
-
-
 const Booking = require("../models/Booking");
-
 const Villa = require("../models/Villa");
-
 const WeddingBooking = require("../models/WeddingBooking");
 
 // GET ALL BOOKINGS
-
-// Controller:
-// Returns all booking records from MongoDB.
-//
-// populate("villaId")
-// replaces the ObjectId stored in villaId with
-// the complete Villa document.
-//
-// Without populate():
-//
-// villaId = "68654abf..."
-//
-// With populate():
-//
-// villaId = {
-//      _id: "...",
-//      name: "Sorath Villa",
-//      price: 2500,
-//      capacity: 4
-// }
-//
-// This allows the frontend to display
-// booking.villaId.name instead of only an ObjectId.
-// ======================================================
-
 const getAllBookings = async (req, res) => {
 
     try {
 
-        // Fetch all bookings and populate villa details
         const bookings = await Booking.find()
             .populate("villaId");
 
-        // Send bookings to frontend
-        res.status(200).json(bookings);
+        return res.status(200).json({
 
-    } catch (error) {
+            success: true,
 
-        res.status(500).json({
-            message: error.message
+            bookings
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: "Internal Server Error."
+
         });
 
     }
 
 };
 
-// CREATE NEW BOOKING
-
-// This controller performs:
-//
-// 1. Read booking details
-// 2. Find overlapping bookings
-// 3. Calculate already booked villas
-// 4. Check available villas
-// 5. Prevent overbooking
-// 6. Create booking
-
-
+// CREATE BOOKING
 const createBooking = async (req, res) => {
 
     try {
-
 
         const {
 
@@ -81,14 +50,11 @@ const createBooking = async (req, res) => {
             villaCount,
             checkInDate,
             checkOutDate
-            
 
         } = req.body;
 
-        // CHECK IF A WEDDING IS ALREADY BOOKED
-        // If a wedding exists during the selected dates,
-        // all 40 villas are reserved.
-        // Therefore, reject the villa booking.
+        // Check if a wedding is already booked
+
         const weddingExists = await WeddingBooking.findOne({
 
             status: {
@@ -115,6 +81,8 @@ const createBooking = async (req, res) => {
 
             return res.status(400).json({
 
+                success: false,
+
                 message:
                     "No Villas Available. All villas are reserved for a Wedding during the selected dates."
 
@@ -122,42 +90,47 @@ const createBooking = async (req, res) => {
 
         }
 
-        // FIND OVERLAPPING BOOKINGS
-        
-        // Date overlap condition
-        //
-        // Existing Booking
-        // |----------|
-        //
-        // New Booking
-        //      |-----------|
-        //
-        // They overlap if:
-        //
-        // existing.checkIn < new.checkOut
-        //
-        // AND
-        //
-        // existing.checkOut > new.checkIn
-        //
-        // ----------------------------------
+        // Fetch Villa
+
+        const villa = await Villa.findById(villaId);
+
+        if (!villa) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Villa not found."
+
+            });
+
+        }
+
+        // Find overlapping bookings
 
         const overlappingBookings = await Booking.find({
 
             villaId,
 
             checkInDate: {
+
                 $lt: checkOutDate
+
             },
 
             checkOutDate: {
+
                 $gt: checkInDate
+
+            },
+
+            status: {
+
+                $ne: "Cancelled"
+
             }
 
         });
-
-        // CALCULATE ALREADY BOOKED VILLAS
-
 
         let bookedVillas = 0;
 
@@ -167,74 +140,65 @@ const createBooking = async (req, res) => {
 
         });
 
-        // FETCH SELECTED VILLA
-
-
-        const villa = await Villa.findById(villaId);
-
-        if (!villa) {
-
-            return res.status(404).json({
-
-                message: "Villa not found"
-
-            });
-
-        }
-
-        // CALCULATE AVAILABLE VILLAS
-        
-
         const availableVillas =
+
             villa.totalUnits - bookedVillas;
 
+        // Prevent overbooking
 
-        // PREVENT OVERBOOKING
-    
-
-        if (villaCount > availableVillas) {
+        if (Number(villaCount) > availableVillas) {
 
             return res.status(400).json({
 
-                message:
-                    `Only ${availableVillas} villas available for selected dates`
+                success: false,
+
+                message: `Only ${availableVillas} villas available for the selected dates.`
 
             });
 
         }
 
-        // CREATE BOOKING
-    
+        // Create booking
 
         const booking = await Booking.create({
 
-            customerName,
+            customerName: customerName.trim(),
+
             phone,
-            email,
+
+            email: email.toLowerCase().trim(),
+
             villaId,
-            villaCount,
+
+            villaCount: Number(villaCount),
+
             checkInDate,
+
             checkOutDate
 
         });
 
+        return res.status(201).json({
 
-        // SEND SUCCESS RESPONSE
-     
+            success: true,
 
-        res.status(201).json({
-
-            message: "Booking Created Successfully",
+            message: "Booking created successfully.",
 
             booking
 
         });
 
-    } catch (error) {
+    }
 
-        res.status(500).json({
+    catch (error) {
 
-            message: error.message
+        console.error(error);
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: "Internal Server Error."
 
         });
 
@@ -243,27 +207,10 @@ const createBooking = async (req, res) => {
 };
 
 
-// CHECK VILLA AVAILABILITY
-
-//
-// This API does NOT create booking.
-//
-// It only tells:
-//
-// Total Villas
-//
-// Already Booked
-//
-// Remaining Villas
-//
-// Used by frontend for live availability.
-
-
+// CHECK AVAILABILITY
 const checkAvailability = async (req, res) => {
 
     try {
-
-        // Read query parameters
 
         const {
 
@@ -272,27 +219,84 @@ const checkAvailability = async (req, res) => {
             checkOutDate
 
         } = req.query;
+        const villa = await Villa.findById(villaId);
 
-        // FIND OVERLAPPING BOOKINGS
-    
+        if (!villa) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Villa not found."
+
+            });
+
+        }
+
+        const weddingExists = await WeddingBooking.findOne({
+
+            status: {
+
+                $ne: "Cancelled"
+
+            },
+
+            startDate: {
+
+                $lt: checkOutDate
+
+            },
+
+            endDate: {
+
+                $gt: checkInDate
+
+            }
+
+        });
+
+        if (weddingExists) {
+
+            return res.status(200).json({
+
+                success: true,
+
+                totalVillas: villa.totalUnits,
+
+                bookedVillas: villa.totalUnits,
+
+                availableVillas: 0,
+
+                message:
+                    "All villas are reserved for a wedding."
+
+            });
+
+        }
 
         const overlappingBookings = await Booking.find({
 
             villaId,
 
             checkInDate: {
+
                 $lt: checkOutDate
+
             },
 
             checkOutDate: {
+
                 $gt: checkInDate
+
+            },
+
+            status: {
+
+                $ne: "Cancelled"
+
             }
 
         });
-
-
-        // CALCULATE BOOKED VILLAS
-       
 
         let bookedVillas = 0;
 
@@ -302,32 +306,13 @@ const checkAvailability = async (req, res) => {
 
         });
 
-
-        // FETCH VILLA
-   
-
-        const villa = await Villa.findById(villaId);
-
-        if (!villa) {
-
-            return res.status(404).json({
-
-                message: "Villa not found"
-
-            });
-
-        }
-
-        // CALCULATE REMAINING VILLAS
-      
-
         const availableVillas =
+
             villa.totalUnits - bookedVillas;
 
-        // SEND RESULT
-     
+        return res.status(200).json({
 
-        res.status(200).json({
+            success: true,
 
             totalVillas: villa.totalUnits,
 
@@ -337,11 +322,17 @@ const checkAvailability = async (req, res) => {
 
         });
 
-    } catch (error) {
+    }
 
-        res.status(500).json({
+    catch (error) {
 
-            message: error.message
+        console.error(error);
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: "Internal Server Error."
 
         });
 
@@ -349,117 +340,74 @@ const checkAvailability = async (req, res) => {
 
 };
 
-
 // UPDATE BOOKING STATUS
-
-
-// Used by Admin Dashboard.
-//
-// Example:
-//
-// Pending
-//      ↓
-// Confirmed
-//
-// Pending
-//      ↓
-// Cancelled
-//
-// Route:
-//
-// PATCH /api/bookings/:id
-
-
 const updateBookingStatus = async (req, res) => {
 
     try {
 
-        // Booking ID comes from URL
-
         const { id } = req.params;
-
-        // New status comes from request body
-
         const { status } = req.body;
 
+        const allowedStatus = [
 
-        // Update booking
+            "Pending",
+            "Confirmed",
+            "Cancelled",
+            "Completed"
+
+        ];
+
+        if (!allowedStatus.includes(status)) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Invalid booking status."
+
+            });
+
+        }
 
         const booking = await Booking.findByIdAndUpdate(
 
             id,
 
             {
+
                 status
+
             },
 
             {
-                // Return updated document
-                new: true
+
+                new: true,
+
+                runValidators: true
+
             }
 
         ).populate("villaId");
 
-
-        // Booking not found
-
         if (!booking) {
 
             return res.status(404).json({
 
-                message: "Booking not found"
+                success: false,
+
+                message: "Booking not found."
 
             });
 
         }
 
+        return res.status(200).json({
 
-        // Success Response
+            success: true,
 
-        res.status(200).json({
-
-            message: "Booking status updated successfully",
+            message: "Booking status updated successfully.",
 
             booking
-
-        });
-
-    } catch (error) {
-
-        res.status(500).json({
-
-            message: error.message
-
-        });
-
-    }
-
-};
-const deleteBooking = async (req, res) => {
-
-    try {
-
-        // Booking ID comes from URL
-        const bookingId = req.params.id;
-
-        // Delete booking
-        const booking = await Booking.findByIdAndDelete(bookingId);
-
-        // If booking not found
-        if (!booking) {
-
-            return res.status(404).json({
-
-                message: "Booking not found"
-
-            });
-
-        }
-
-        // Success Response
-        res.status(200).json({
-
-            message: "Booking deleted successfully"
 
         });
 
@@ -467,9 +415,60 @@ const deleteBooking = async (req, res) => {
 
     catch (error) {
 
-        res.status(500).json({
+        console.error(error);
 
-            message: error.message
+        return res.status(500).json({
+
+            success: false,
+
+            message: "Internal Server Error."
+
+        });
+
+    }
+
+};
+
+// DELETE BOOKING
+const deleteBooking = async (req, res) => {
+
+    try {
+
+        const { id } = req.params;
+
+        const booking = await Booking.findByIdAndDelete(id);
+
+        if (!booking) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Booking not found."
+
+            });
+
+        }
+
+        return res.status(200).json({
+
+            success: true,
+
+            message: "Booking deleted successfully."
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: "Internal Server Error."
 
         });
 
@@ -480,9 +479,13 @@ const deleteBooking = async (req, res) => {
 module.exports = {
 
     getAllBookings,
-    createBooking,
-    checkAvailability,
-    updateBookingStatus,
-    deleteBooking
-};
 
+    createBooking,
+
+    checkAvailability,
+
+    updateBookingStatus,
+
+    deleteBooking
+
+};

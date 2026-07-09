@@ -19,18 +19,22 @@ const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || "0.0.0.0";
 
 const ensureDefaultVilla = async () => {
-  const count = await Villa.countDocuments();
+  try {
+    const count = await Villa.countDocuments();
 
-  if (count === 0) {
-    await Villa.create({
-      name: "Sorath Villa",
-      description: "Luxury villa with private pool, garden, and premium resort amenities.",
-      price: 12000,
-      capacity: 8,
-      totalUnits: 8,
-    });
+    if (count === 0) {
+      await Villa.create({
+        name: "Sorath Villa",
+        description: "Luxury villa with private pool, garden, and premium resort amenities.",
+        price: 12000,
+        capacity: 8,
+        totalUnits: 8,
+      });
 
-    console.log("Default Sorath Villa created.");
+      console.log("Default Sorath Villa created.");
+    }
+  } catch (error) {
+    console.warn("Default villa seed skipped:", error.message);
   }
 };
 

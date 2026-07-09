@@ -1,8 +1,13 @@
 const express = require("express");
-
 const router = express.Router();
 
 const { verifyAdmin } = require("../middleware/authMiddle");
+const { validateBooking } = require("../middleware/bookingValidation");
+
+const {
+    validateAvailability
+} = require("../middleware/availabilityValidation");
+
 const {
     getAllBookings,
     createBooking,
@@ -11,14 +16,39 @@ const {
     deleteBooking
 } = require("../controllers/bookingController");
 
-router.get("/", verifyAdmin, getAllBookings);
+// Public Routes
 
-router.get("/availability", checkAvailability);
+router.post(
+    "/",
+    validateBooking,
+    createBooking
+);
 
-router.post("/", createBooking);
+router.get(
+    "/availability",
+    validateAvailability,
+    checkAvailability
+);
 
-router.get("/", verifyAdmin, getAllBookings);
+// Admin Routes
 
-router.delete("/:id", verifyAdmin, deleteBooking);
+
+router.get(
+    "/",
+    verifyAdmin,
+    getAllBookings
+);
+
+router.patch(
+    "/:id",
+    verifyAdmin,
+    updateBookingStatus
+);
+
+router.delete(
+    "/:id",
+    verifyAdmin,
+    deleteBooking
+);
 
 module.exports = router;

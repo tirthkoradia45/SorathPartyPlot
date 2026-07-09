@@ -2,20 +2,46 @@ const express = require("express");
 const router = express.Router();
 
 const { verifyAdmin } = require("../middleware/authMiddle");
+const {
+    validateWeddingBooking
+} = require("../middleware/weddingBookingValidation");
 
 const {
-  getAllWeddingBookings,
-  createWeddingBooking,
-  updateWeddingStatus,
-  deleteWeddingBooking,
+    getAllWeddingBookings,
+    createWeddingBooking,
+    updateWeddingStatus,
+    deleteWeddingBooking
 } = require("../controllers/weddingBookingController");
 
-router.get("/", verifyAdmin, getAllWeddingBookings);
 
-router.post("/", createWeddingBooking);
+// Public Routes
 
-router.patch("/:id", verifyAdmin, updateWeddingStatus);
 
-router.delete("/:id", verifyAdmin, deleteWeddingBooking);
+router.post(
+    "/",
+    validateWeddingBooking,
+    createWeddingBooking
+);
+
+// Admin Routes
+
+
+router.get(
+    "/",
+    verifyAdmin,
+    getAllWeddingBookings
+);
+
+router.patch(
+    "/:id",
+    verifyAdmin,
+    updateWeddingStatus
+);
+
+router.delete(
+    "/:id",
+    verifyAdmin,
+    deleteWeddingBooking
+);
 
 module.exports = router;

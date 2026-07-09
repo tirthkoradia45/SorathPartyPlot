@@ -18,26 +18,29 @@ const connectDB = async () => {
     // Get MongoDB connection string from environment variables
     const uri = process.env.MONGO_URI;
 
-    // Validate that MONGO_URI is set and has valid format
-    if (
-      !uri ||
-      (!uri.startsWith("mongodb://") && !uri.startsWith("mongodb+srv://"))
-    ) {
-      throw new Error(
-        'Invalid MONGO_URI. Set MONGO_URI in .env to a valid MongoDB connection string starting with "mongodb://" or "mongodb+srv://\".'
+    if (!uri || (!uri.startsWith("mongodb://") && !uri.startsWith("mongodb+srv://"))) {
+      console.warn(
+        "MONGO_URI is not configured. Starting without a MongoDB connection. Update backend/.env to enable database features."
       );
+      return;
     }
 
-    // Establish connection to MongoDB
-    await mongoose.connect(uri);
+    await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 10000,
+    });
     console.log("MongoDB Connected");
 
   } catch (error) {
-    // Log connection error message
-    console.log(error.message);
+    console.error("MongoDB connection failed:", error.message);
 
-    // Exit process with error code if connection fails
-    process.exit(1);
+    if (process.env.NODE_ENV === "production") {
+      process.exit(1);
+    }
+
+    console.warn(
+      "Continuing without database connection so the server can still start in development."
+    );
   }
 };
 

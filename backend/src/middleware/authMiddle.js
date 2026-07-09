@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 exports.verifyAdmin = (req, res, next) => {
+
   try {
 
     const authHeader = req.headers.authorization;
@@ -14,18 +15,29 @@ exports.verifyAdmin = (req, res, next) => {
 
     }
 
+    if (!process.env.JWT_SECRET) {
+
+      return res.status(500).json({
+        success: false,
+        message: "JWT secret is not configured.",
+      });
+
+    }
+
     const token = authHeader.split(" ")[1];
 
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || "SorathResortJWTSecret123"
+      process.env.JWT_SECRET
     );
 
     req.admin = decoded;
 
     next();
 
-  } catch (error) {
+  }
+
+  catch (error) {
 
     return res.status(401).json({
       success: false,
@@ -33,4 +45,5 @@ exports.verifyAdmin = (req, res, next) => {
     });
 
   }
+
 };
