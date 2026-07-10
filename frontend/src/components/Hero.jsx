@@ -9,7 +9,7 @@ function Hero() {
 
       id="home"
 
-      className="relative h-screen w-full"
+      className="relative min-h-screen w-full overflow-hidden"
 
     >
 
@@ -44,7 +44,7 @@ function Hero() {
 
       <div
 
-        className="relative z-10 h-full flex flex-col justify-center items-center text-center px-6"
+        className="relative z-10 min-h-screen flex flex-col justify-center items-center text-center px-6 sm:px-8 lg:px-10"
 
       >
 
@@ -52,7 +52,7 @@ function Hero() {
 
         <p
           data-aos = "fade-down"
-          className="uppercase tracking-[8px] text-[#D4AF37] text-sm md:text-lg mb-5"
+          className="uppercase tracking-[6px] sm:tracking-[8px] text-[#D4AF37] text-xs sm:text-sm md:text-lg mb-4"
 
         >
 
@@ -65,7 +65,7 @@ function Hero() {
         <h1
           data-aos="zoom-in"
           data-aos-delay="200"
-          className="font-serif text-5xl md:text-7xl font-bold text-white"
+          className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight"
 
         >
 
@@ -78,7 +78,7 @@ function Hero() {
         <h2
           data-aos="fade-up"
           data-aos-delay="400"
-          className="mt-6 text-[#D4AF37] text-2xl md:text-3xl font-semibold"
+          className="mt-5 text-[#D4AF37] text-xl sm:text-2xl md:text-3xl font-semibold"
 
         >
 
@@ -91,7 +91,7 @@ function Hero() {
         <p
           data-aos="fade-up"
           data-aos-delay="600"
-          className="mt-6 max-w-3xl text-lg text-gray-200 leading-8"
+          className="mt-6 max-w-3xl text-base sm:text-lg md:text-xl text-gray-200 leading-8 px-2"
 
         >
 
@@ -105,50 +105,38 @@ function Hero() {
 
         {/* Buttons */}
 
-        <div
-          data-aos="fade-up"
-          data-aos-delay="800"
-          className="mt-10 flex flex-wrap justify-center gap-6"
-
-        >
-
-          <div className="mt-10 flex flex-wrap justify-center gap-6">
+ <div
+  data-aos="fade-up"
+  data-aos-delay="800"
+  className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-5 w-full"
+>
 
   {/* Book Villas */}
 
   <Link
-  to="/villas"
-  className="inline-flex items-center justify-center border-2 border-[#D4AF37] text-[#D4AF37] text-[22px] font-bold w-72 h-[68px] rounded-full transition-all duration-300 hover:bg-[#D4AF37]
-  hover:text-[#111111] hover:-translate-y-1hover:scale-105  hover:shadow-[0_0_25px_rgba(212,175,55,0.35)]"
+    to="/villas"
+    className="inline-flex items-center justify-center w-full max-w-[320px] sm:w-72 h-14 sm:h-[68px] border-2 border-[#D4AF37] rounded-full text-[#D4AF37] text-lg sm:text-xl font-bold whitespace-nowrap transition-all duration-300 hover:bg-[#D4AF37] hover:text-[#111111] hover:-translate-y-1 hover:scale-105 hover:shadow-[0_0_25px_rgba(212,175,55,0.35)]"
   >
     Book Villas
   </Link>
 
   {/* Book Wedding */}
 
-<Link
-  to="/party-plot"
-  className="inline-flex items-center justify-center border-2 border-[#D4AF37] text-[#D4AF37]
-    text-[22px] font-bold w-72 h-[68px] rounded-full transition-all duration-300 hover:bg-[#D4AF37]
-    hover:text-[#111111] hover:-translate-y-1 hover: scale-105 hover:shadow-[0_0_25px_rgba(212,175,55,0.35)"
+  <Link
+    to="/party-plot"
+    className="inline-flex items-center justify-center w-full max-w-[320px] sm:w-72 h-14 sm:h-[68px] border-2 border-[#D4AF37] rounded-full text-[#D4AF37] text-lg sm:text-xl font-bold whitespace-nowrap transition-all duration-300 hover:bg-[#D4AF37] hover:text-[#111111] hover:-translate-y-1 hover:scale-105 hover:shadow-[0_0_25px_rgba(212,175,55,0.35)]"
   >
-  Book Wedding
-</Link>
+    Book Wedding
+  </Link>
 
 </div>
-
-          
-
-        </div>
-
-      </div>
-
+</div>
 {/* ===============================
     LUXURY SCROLL INDICATOR
 ================================ */}
 
 <div
-  className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20"
+  className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 hidden sm:block"
   data-aos="fade-up"
   data-aos-delay="1200"
 >
