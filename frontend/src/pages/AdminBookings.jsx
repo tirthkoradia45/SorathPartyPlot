@@ -32,7 +32,7 @@ function AdminBookings() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState(null);
   // FETCH BOOKINGS
-  const fetchBookings = async () => {
+const fetchBookings = async () => {
 
   try {
 
@@ -41,60 +41,47 @@ function AdminBookings() {
     if (!token) {
 
       navigate("/admin");
-
       return;
 
     }
 
     const response = await axios.get(
-
       buildApiUrl("/api/bookings"),
-
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       }
-
     );
 
-    setBookings(response.data);
+    const bookingsData = Array.isArray(response.data)
+      ? response.data
+      : response.data.bookings || [];
 
-  }
+    setBookings(bookingsData);
 
-  catch (error) {
+  } catch (error) {
 
     if (!error.response) {
 
       toast.error("Unable to load data.");
 
-    }
-
-    else if (error.response.status === 401) {
+    } else if (error.response.status === 401) {
 
       localStorage.removeItem("adminToken");
-
       navigate("/admin");
-
       return;
 
-    }
-
-    else {
+    } else {
 
       toast.error(
-
         error.response.data.message ||
-
         "Failed to load data."
-
       );
 
     }
 
-  }
-
-  finally {
+  } finally {
 
     setLoading(false);
 
@@ -102,11 +89,11 @@ function AdminBookings() {
 
 };
 
-  useEffect(() => {
+useEffect(() => {
 
-    fetchBookings();
+  fetchBookings();
 
-  }, []);
+}, []);
 
   // UPDATE STATUS
 
