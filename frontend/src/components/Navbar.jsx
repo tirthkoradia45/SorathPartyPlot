@@ -93,12 +93,10 @@ function Navbar() {
     >
 
       <div
-        className={`max-w-[1600px] mx-auto flex items-center justify-between px-6 xl:px-12 transition-all duration-500 ${
-          scrolled ? "h-[60px]" : "h-[72px]"
+        className={`max-w-[1600px] mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 xl:px-12 transition-all duration-500 ${
+         scrolled? "h-[58px] sm:h-[60px]": "h-[64px] sm:h-[72px]"
         }`}
       >
-
-        {/* ================= LOGO ================= */}
 
         <Link
           to="/"
@@ -111,14 +109,12 @@ function Navbar() {
             alt="Sorath Resort"
             className={`transition-all duration-500 ${
               scrolled
-                ? "h-[48px]"
-                : "h-[60px]"
+                ? "h-10 sm:h-12"
+                : "h-12 sm:h-16"
             } w-auto object-contain hover:scale-105`}
           />
 
         </Link>
-
-        {/* ================= DESKTOP MENU ================= */}
 
         <div className="hidden lg:flex flex-1 justify-center items-center gap-12">
 
@@ -298,8 +294,6 @@ function Navbar() {
 
           </div>
 
-          {/* ================= ADMIN BUTTON ================= */}
-
           <Link
             to="/admin/login"
             onClick={closeMenus}
@@ -317,11 +311,8 @@ function Navbar() {
           </Link>
 
         </div>
-
-        {/* ================= MOBILE MENU BUTTON ================= */}
-
         <button
-          className="lg:hidden text-[#D4AF37] text-3xl"
+          className="lg:hidden text-[#D4AF37] text-2xl sm:text-3xl p-2"
           onClick={() => setMobileMenu(!mobileMenu)}
         >
 
@@ -330,11 +321,15 @@ function Navbar() {
         </button>
 
       </div>
-            {/* ================= MOBILE MENU ================= */}
 
       {mobileMenu && (
-
-        <div className="lg:hidden bg-[#111111]/95 backdrop-blur-xl border-t border-[#D4AF37]/30 shadow-2xl">
+<div
+  className={`lg:hidden overflow-hidden transition-all duration-500 ${
+    mobileMenu
+      ? "max-h-[700px] opacity-100"
+      : "max-h-0 opacity-0"
+  }`}
+>
 
           <div className="flex flex-col py-6">
 
@@ -411,7 +406,7 @@ function Navbar() {
             <Link
               to="/villas"
               onClick={closeMenus}
-              className="mobile-link"
+              className="mobile-link py-4 text-lg"
             >
               🏡 Luxury Villas
             </Link>
@@ -429,7 +424,7 @@ function Navbar() {
             <Link
               to="/admin/login"
               onClick={closeMenus}
-              className="mx-6 text-center border border-[#D4AF37]
+              className="mx-4 sm:mx-6 text-center border border-[#D4AF37]
                          text-[#D4AF37]
                          py-3 rounded-full
                          hover:bg-[#D4AF37]
@@ -444,6 +439,7 @@ function Navbar() {
         </div>
 
       )}
+      <div className="pb-3"></div>
 
     </nav>
 
