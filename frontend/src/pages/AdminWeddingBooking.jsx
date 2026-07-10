@@ -50,7 +50,7 @@ const fetchBookings = async () => {
 
     );
 
-    setBookings(response.data);
+    setBookings(response.data.bookings || []);
 
   }
 
@@ -1112,7 +1112,7 @@ if (loading) {
           </button>
 
         </div>
-]
+
 
         <div className="border-t border-[#D4AF37]/20 mt-16 pt-8 text-center">
 
