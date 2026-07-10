@@ -44,16 +44,12 @@ function Facilities() {
   return (
     <section
       id="facilities"
-      className="bg-[#111111] py-24 px-6"
+      className="bg-[#111111] py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8"
     >
       <div className="max-w-7xl mx-auto">
 
-{/* ===========================
-        SECTION HEADING
-=========================== */}
-
 <div
-  className="text-center mb-24"
+  className="text-center mb-14 sm:mb-20 lg:mb-24"
   data-aos="fade-up"
 >
 
@@ -94,11 +90,7 @@ function Facilities() {
 
 </div>
 
-        {/* ===========================
-              FIRST ROW
-        =========================== */}
-
-        <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
 
           {facilities.slice(0, 3).map((facility, index) => (
 
@@ -139,17 +131,13 @@ function Facilities() {
 
         </div>
 
-        {/* ===========================
-              SECOND ROW
-        =========================== */}
-
-        <div className="flex justify-center gap-10 mt-10 flex-wrap">
+        <div className="flex flex-col sm:flex-row justify-center gap-6 sm:gap-8 lg:gap-10 mt-6 sm:mt-8 lg:mt-10">
 
           {facilities.slice(3).map((facility, index) => (
 
             <div
               key={index}
-              className="facility-card w-full md:w-[420px]"
+              className="facility-card w-full sm:max-w-[420px]"
               data-aos="zoom-in"
               data-aos-delay={(index + 3) * 120}
             >

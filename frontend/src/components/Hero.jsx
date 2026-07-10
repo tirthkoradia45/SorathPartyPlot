@@ -13,10 +13,6 @@ function Hero() {
 
     >
 
-      {/* ===============================
-          BACKGROUND IMAGE
-      ================================ */}
-
       <img
 
         src={hero}
@@ -37,10 +33,6 @@ function Hero() {
       }}
 
       />
-
-      {/* ===============================
-          HERO CONTENT
-      ================================ */}
 
       <div
 
@@ -131,9 +123,6 @@ function Hero() {
 
 </div>
 </div>
-{/* ===============================
-    LUXURY SCROLL INDICATOR
-================================ */}
 
 <div
   className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 hidden sm:block"

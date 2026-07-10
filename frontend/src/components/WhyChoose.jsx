@@ -37,14 +37,14 @@ function WhyChoose() {
   return (
     <section
       id="why"
-      className="bg-[#111111] py-28 px-6"
+      className="bg-[#111111] py-16 sm:py-20 lg:py-28 px-4 sm:px-6 lg:px-8"
     >
       <div className="max-w-7xl mx-auto">
 
         {/* Heading */}
 
         <div
-          className="text-center mb-20"
+          className="text-center mb-14 sm:mb-16 lg:mb-20"
           data-aos="fade-up"
         >
 
@@ -86,7 +86,7 @@ function WhyChoose() {
 
         {/* Cards */}
 
-        <div className="grid lg:grid-cols-2 gap-10 mt-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 mt-10 sm:mt-14 lg:mt-16">
 
          {reasons.map((item, index) => (
 

@@ -8,16 +8,13 @@ function Gallery() {
   return (
     <section
       id="gallery"
-      className="bg-[#111111] py-28 px-6"
+      className="bg-[#111111] py-16 sm:py-20 lg:py-28 px-4 sm:px-6 lg:px-8"
     >
       <div className="max-w-7xl mx-auto">
 
-        {/* ==========================
-              SECTION HEADING
-        ========================== */}
 
         <div
-          className="text-center mb-20"
+          className="text-center mb-14 sm:mb-16 lg:mb-20"
           data-aos="fade-up"
         >
 
@@ -56,12 +53,8 @@ function Gallery() {
 
         </div>
 
-        {/* ==========================
-              FEATURE IMAGE
-        ========================== */}
-
         <div
-          className="gallery-hero"
+          className="gallery-hero rounded-2xl sm:rounded-3xl overflow-hidden"
           data-aos="fade-up"
         >
 
@@ -93,11 +86,7 @@ function Gallery() {
 
         </div>
 
-        {/* ==========================
-                GALLERY GRID
-        ========================== */}
-
-        <div className="grid md:grid-cols-2 gap-8 mt-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 lg:gap-8 mt-8 sm:mt-10">
 
           {/* Villas */}
 

@@ -34,7 +34,7 @@ function ContactSection() {
   return (
     <section
       id="contact"
-      className="bg-[#111111] py-28 px-6"
+      className="bg-[#111111] py-16 sm:py-20 lg:py-28 px-4 sm:px-6 lg:px-8"
     >
       <Toaster position="top-right" toastOptions={{duration: 3000, style: {background: "#1A1A1A", color: "#fff", border: "1px solid #D4AF37"}}} />
       <div className="max-w-7xl mx-auto">
@@ -42,7 +42,7 @@ function ContactSection() {
         {/* Heading */}
 
         <div
-          className="text-center mb-20"
+          className="text-center mb-14 sm:mb-16 lg:mb-20"
           data-aos="fade-up"
         >
 
@@ -81,7 +81,7 @@ function ContactSection() {
 
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-14">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
 
           {/* Left */}
 
@@ -161,7 +161,7 @@ function ContactSection() {
 
             </div>
 
-            <div className="mt-10 flex flex-wrap gap-5">
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 sm:gap-5">
 
               <a
                 href="tel:+919428575445"
@@ -192,8 +192,8 @@ function ContactSection() {
           {/* Right */}
 
           <div className="space-y-6">
-            <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-3xl p-6">
-              <h3 className="text-2xl font-serif font-semibold text-[#D4AF37] mb-4">
+            <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-2xl sm:rounded-3xl p-5 sm:p-6">
+              <h3 className="text-xl sm:text-2xl font-serif font-semibold text-[#D4AF37] mb-4">
                 Send Us a Message
               </h3>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -224,7 +224,7 @@ function ContactSection() {
                 <textarea
                   name="message"
                   placeholder="Your Message"
-                  rows="4"
+                  rows={5}
                   value={formData.message}
                   onChange={handleChange}
                   className="w-full bg-[#252525] border border-gray-700 rounded-xl px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20"
