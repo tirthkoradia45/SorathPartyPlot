@@ -5,6 +5,7 @@ import Facilities from "../components/Facilities";
 import Gallery from "../components/Gallery";
 import Footer from "../components/Footer";
 import WhyChoose from "../components/WhyChoose";
+import ContactSection from "../components/Contact";
 function Home() {
   return (
     <>
@@ -20,7 +21,7 @@ function Home() {
 
       <WhyChoose />
 
-      <Contact />
+      <ContactSection />
 
       <Footer />
     </>
