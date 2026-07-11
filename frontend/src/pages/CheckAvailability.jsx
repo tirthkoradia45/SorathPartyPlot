@@ -7,29 +7,11 @@ import { buildApiUrl } from "../config/api";
 import heroImage from "../assets/hero.jpg";
 
 function CheckAvailability() {
-
-    const navigate = useNavigate();
-
-    // ==========================================
-    // STATES
-    // ==========================================
-
-    const [bookingType, setBookingType] = useState("villa");
-
-    const [selectedDate, setSelectedDate] = useState("");
-
-    const [loading, setLoading] = useState(false);
-
-    const [result, setResult] = useState(null);
-
-    // ==========================================
-    // API FUNCTION
-    // ==========================================
-
-    // ==========================================
-// API FUNCTION
-// ==========================================
-
+const navigate = useNavigate();
+const [bookingType, setBookingType] = useState("villa");
+const [selectedDate, setSelectedDate] = useState("");
+const [loading, setLoading] = useState(false);
+const [result, setResult] = useState(null);
 const checkAvailability = async () => {
 
     if (!selectedDate) {
@@ -84,10 +66,6 @@ const checkAvailability = async () => {
         <div className="min-h-screen bg-[#111111] text-white">
             <Toaster position="top-right" toastOptions={{duration: 3000, style: {background: "#1A1A1A", color: "#fff", border: "1px solid #D4AF37"}}} />
 
-            {/* ==========================================
-                HERO SECTION
-            ========================================== */}
-
             <section
                 className="relative h-[55vh] flex items-center justify-center"
                 style={{
@@ -122,10 +100,6 @@ const checkAvailability = async () => {
 
             </section>
 
-            {/* ==========================================
-                MAIN CONTAINER
-            ========================================== */}
-
             <div className="max-w-6xl mx-auto px-6 py-20">
 
                 <div className="text-center mb-14">
@@ -151,15 +125,10 @@ const checkAvailability = async () => {
 
                 </div>
 
-                {/* ==========================================
-                    CHECK CARD
-                ========================================== */}
-
                 <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-3xl p-10 shadow-[0_0_40px_rgba(212,175,55,.08)]">
 
                     <div className="grid md:grid-cols-2 gap-8">
 
-                        {/* Booking Type */}
 
                         <div>
 
@@ -197,7 +166,7 @@ const checkAvailability = async () => {
 
                         </div>
 
-                        {/* Date */}
+                
 
                         <div>
 
@@ -226,9 +195,6 @@ const checkAvailability = async () => {
                         </div>
 
                     </div>
-                                        {/* ==========================================
-                        CHECK BUTTON
-                    ========================================== */}
 
                     <div className="mt-10 text-center">
 
@@ -255,10 +221,6 @@ const checkAvailability = async () => {
                     </div>
 
                 </div>
-                                {/* ==========================================
-                    RESULT SECTION
-                ========================================== */}
-
                 {result && (
 
                     <div className="mt-16">
@@ -276,10 +238,6 @@ const checkAvailability = async () => {
                                 Booking Status
 
                             </h2>
-
-                            {/* ==========================================
-                                VILLA RESULT
-                            ========================================== */}
 
                             {bookingType === "villa" && (
 
@@ -376,12 +334,7 @@ const checkAvailability = async () => {
                                 </>
 
                             )}
-
-                            {/* ==========================================
-                                PARTY PLOT RESULT
-                            ========================================== */}
-
-                            {bookingType === "wedding" && (
+                        {bookingType === "wedding" && (
 
                                 <div
                                     className={`rounded-2xl border p-8 text-center ${
@@ -420,10 +373,6 @@ const checkAvailability = async () => {
                                 </div>
 
                             )}
-
-                            {/* ==========================================
-                                BOOK NOW BUTTON
-                            ========================================== */}
 
                             <div className="text-center mt-10">
 
@@ -468,9 +417,6 @@ const checkAvailability = async () => {
                     </div>
 
                 )}
-                                {/* ==========================================
-                    WHY CHECK AVAILABILITY
-                ========================================== */}
 
                 <section className="mt-24">
 
@@ -501,7 +447,7 @@ const checkAvailability = async () => {
 
                     <div className="grid md:grid-cols-3 gap-8">
 
-                        {/* Card 1 */}
+                        
 
                         <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-3xl p-8 text-center hover:border-[#D4AF37] hover:-translate-y-2 transition-all duration-300">
 
@@ -526,8 +472,6 @@ const checkAvailability = async () => {
 
                         </div>
 
-                        {/* Card 2 */}
-
                         <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-3xl p-8 text-center hover:border-[#D4AF37] hover:-translate-y-2 transition-all duration-300">
 
                             <div className="text-5xl mb-5">
@@ -551,8 +495,6 @@ const checkAvailability = async () => {
                             </p>
 
                         </div>
-
-                        {/* Card 3 */}
 
                         <div className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-3xl p-8 text-center hover:border-[#D4AF37] hover:-translate-y-2 transition-all duration-300">
 
@@ -581,10 +523,6 @@ const checkAvailability = async () => {
                     </div>
 
                 </section>
-
-                {/* ==========================================
-                    CALL TO ACTION
-                ========================================== */}
 
                 <section className="mt-24">
 

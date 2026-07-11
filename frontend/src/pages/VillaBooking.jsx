@@ -1,23 +1,16 @@
-// Import React hooks for state and lifecycle management
+
 import { useEffect, useState } from "react";
 import villaImage from "../assets/villa.jpg";
 import { useNavigate } from "react-router-dom";
 
-// Import axios library for HTTP requests to the backend API
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { buildApiUrl } from "../config/api";
 
 function VillaBooking() {
-  const navigate = useNavigate();
-  // Store the list of villas retrieved from backend
+  const navigate = useNavigate();d
   const [villas, setVillas] = useState([]);
-  
-
-  // Store availability details for the selected villa and date range
-  const [availability, setAvailability] = useState(null);
-
-  // Store values from the booking form fields
+  const [availability, setAvailability] = useState(null);s
   const [formData, setFormData] = useState({
     customerName: "",
     phone: "",
@@ -27,10 +20,8 @@ function VillaBooking() {
     checkInDate: "",
     checkOutDate: "",
   });
+// FETCH ALL VILLAS
 
-  // ===============================
-  // FETCH ALL VILLAS
-  // ===============================
   useEffect(() => {
 
     const fetchVillas = async () => {
@@ -54,9 +45,7 @@ function VillaBooking() {
 
   }, []);
 
-  // ===============================
   // HANDLE INPUT CHANGE
-  // ===============================
   const handleChange = (e) => {
 
     const value =
@@ -70,12 +59,7 @@ function VillaBooking() {
     });
 
 };
-
-  // ===============================
-  // CHECK AVAILABILITY
-  // ===============================
-  // Fetch availability from the backend for the selected villa and dates.
-  // The backend returns booked and available villa counts.
+// CHECK AVAILABILITY
   const checkAvailability = async () => {
 
     if (
@@ -90,19 +74,14 @@ function VillaBooking() {
       const response = await axios.get(
         buildApiUrl(`/api/bookings/availability?villaId=${formData.villaId}&checkInDate=${formData.checkInDate}&checkOutDate=${formData.checkOutDate}`)
       );
-
-      // save availability response in state for UI display and validation
       setAvailability(response.data);
     } catch (error) {
       console.error(error);
       toast.error("Unable to check availability right now.");
     }
   };
+// AUTO CHECK AVAILABILITY
 
-  // ===============================
-  // AUTO CHECK AVAILABILITY
-  // ===============================
-  // Run availability check whenever the selected villa or dates change.
   useEffect(() => {
     checkAvailability();
   }, [
@@ -110,10 +89,8 @@ function VillaBooking() {
     formData.checkInDate,
     formData.checkOutDate,
   ]);
+// SUBMIT BOOKING
 
-  // ===============================
-  // SUBMIT BOOKING
-  // ===============================
 const handleSubmit = async (e) => {
 
   e.preventDefault();
@@ -123,18 +100,16 @@ const handleSubmit = async (e) => {
     return;
   }
 
-  if (!/^[0-9]{10}$/.test(formData.phone)) {
+  if (!/^[6-9]\d{9}$/.test(formData.phone)) {
     toast.error("Phone number must contain exactly 10 digits.");
     return;
   }
-
-  if (
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
-  ) {
+  const email = formData.email.trim();
+  const emailRegex =/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+  if (!emailRegex.test(email)) {
     toast.error("Please enter a valid email address.");
     return;
-  }
-
+}
   if (!formData.villaId) {
     toast.error("Please select a villa.");
     return;
@@ -179,7 +154,7 @@ const handleSubmit = async (e) => {
     const payload = {
       customerName: formData.customerName.trim(),
       phone: formData.phone.trim(),
-      email: formData.email.trim(),
+      email,
       villaId: formData.villaId,
       villaCount: formData.villaCount,
       checkInDate: formData.checkInDate,
@@ -290,8 +265,6 @@ const handleSubmit = async (e) => {
         </p>
       </div>
     </section>
-
-    {/* ── Statistics Strip (Change #19) ── */}
     <div className="max-w-7xl mx-auto px-6 lg:px-10 -mt-10 relative z-10">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
@@ -311,20 +284,16 @@ const handleSubmit = async (e) => {
       </div>
     </div>
 
-    {/* ── Main Content ── */}
     <div className="max-w-7xl mx-auto px-6 lg:px-10 py-20">
       <div className="grid lg:grid-cols-3 gap-10">
 
-        {/* ── Left Column: Villa Cards ── */}
         <div className="lg:col-span-2">
 
-          {/* Section header */}
           <div className="mb-10">
             <p className="uppercase tracking-[0.3em] text-[#D4AF37] text-sm mb-3">
               Premium Accommodation
             </p>
             <h2 className="font-serif text-5xl font-bold mb-3">Choose Your Villa</h2>
-            {/* Section divider (Change #18) */}
             <div className="w-24 h-1 bg-[#D4AF37] rounded-full mb-6" />
             <p className="text-gray-400 max-w-2xl">
               Experience luxurious accommodation surrounded by nature, designed for
@@ -332,14 +301,13 @@ const handleSubmit = async (e) => {
             </p>
           </div>
 
-          {/* Villa Cards (Change #5) */}
           <div className="grid gap-8 mb-10">
             {villas.map((villa) => (
               <div
                 key={villa._id}
                 className="bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-3 hover:border-[#D4AF37] hover:shadow-[0_0_45px_rgba(212,175,55,.22)] cursor-pointer"
               >
-                {/* Image with zoom (Changes #7) */}
+
                 <div className="overflow-hidden rounded-t-3xl">
                   <img
                     src={villaImage}
@@ -347,18 +315,11 @@ const handleSubmit = async (e) => {
                     className="h-72 w-full object-cover transition-transform duration-700 hover:scale-110"
                   />
                 </div>
-
-                {/* Card body (Change #8) */}
                 <div className="p-8">
-                  {/* Villa name (Change #9) */}
                   <h2 className="font-serif text-4xl font-bold text-white mb-4">
                     {villa.name}
                   </h2>
-
-                  {/* Description (Change #10) */}
                   <p className="text-gray-400 leading-8 mb-8">{villa.description}</p>
-
-                  {/* Price & Capacity grid (Change #11) */}
                   <div className="grid grid-cols-2 gap-5 mb-8">
                     <div className="bg-[#222222] rounded-2xl border border-[#D4AF37]/10 p-5 hover:border-[#D4AF37] transition-all">
                       <p className="text-gray-400 text-sm">Price</p>
@@ -369,8 +330,6 @@ const handleSubmit = async (e) => {
                       <h3 className="text-2xl font-bold">{villa.capacity} Guests</h3>
                     </div>
                   </div>
-
-                  {/* Availability (Change #12) */}
                   {availability && formData.villaId === villa._id && (
                     <div className="flex gap-6 mt-4">
                       <p className="text-red-400 font-semibold">
@@ -386,19 +345,14 @@ const handleSubmit = async (e) => {
             ))}
           </div>
         </div>
-
-        {/* ── Right Column: Booking Panel (Change #13) ── */}
         <div className="bg-gradient-to-b from-[#1A1A1A] to-[#141414] border border-[#D4AF37]/20 rounded-3xl p-10 sticky top-24 shadow-[0_0_35px_rgba(212,175,55,.08)]">
 
-          {/* Booking heading (Change #14) */}
           <h2 className="font-serif text-4xl font-bold text-[#D4AF37] mb-2">
             Book Your Stay
           </h2>
           <p className="text-gray-400 mb-8">
             Reserve your luxury villa in just a few steps.
           </p>
-
-          {/* Availability summary */}
           {availability && (
             <div className="mb-6 rounded-xl bg-black/40 p-4 border border-[#D4AF37]/20">
               <div className="flex justify-between">
@@ -411,8 +365,6 @@ const handleSubmit = async (e) => {
               </div>
             </div>
           )}
-
-          {/* Booking Form — inputs styled per Change #15 */}
           <form onSubmit={handleSubmit} className="space-y-4">
 
             <input
@@ -437,6 +389,7 @@ const handleSubmit = async (e) => {
 
             <input
               type="email"
+              required
               name="email"
               placeholder="Email"
               value={formData.email}
@@ -490,7 +443,6 @@ const handleSubmit = async (e) => {
               className="w-full bg-[#252525] border border-gray-700 rounded-xl px-5 py-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all duration-300"
             />
 
-            {/* Book Button (Change #16) */}
             <button
               type="submit"
               className="w-full bg-[#D4AF37] text-black font-bold text-lg py-4 rounded-xl transition-all duration-300 hover:bg-[#c49b2c] hover:shadow-[0_0_25px_rgba(212,175,55,.35)] hover:scale-[1.02] active:scale-95"
@@ -498,8 +450,6 @@ const handleSubmit = async (e) => {
               BOOK NOW
             </button>
           </form>
-
-          {/* Booking Summary (Change #17) */}
           <hr className="my-8 border-gray-700" />
           <div className="space-y-4 text-gray-300">
             <div className="flex justify-between">

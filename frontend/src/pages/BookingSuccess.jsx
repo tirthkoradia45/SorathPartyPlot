@@ -13,23 +13,10 @@ function BookingSuccess() {
 
       <div className="w-full max-w-4xl">
 
-        {/* ================= SUCCESS ICON ================= */}
-
         <div className="flex justify-center">
 
           <div
-            className="
-              w-28
-              h-28
-              rounded-full
-              bg-green-500/20
-              border
-              border-green-500
-              flex
-              items-center
-              justify-center
-            "
-          >
+            className="w-28 h-28 rounded-full bg-green-500/20 border border-green-500 flex items-center justify-center">
 
             <FaCheckCircle
               className="text-green-400 text-6xl"
@@ -39,20 +26,8 @@ function BookingSuccess() {
 
         </div>
 
-        {/* ================= HEADING ================= */}
-
-        <h1
-          className="
-            text-center
-            text-5xl
-            font-bold
-            mt-8
-            text-[#D4AF37]
-          "
-        >
-
-          Booking Request Submitted
-
+        <h1 className="text-center text-5xl font-bold mt-8 text-[#D4AF37]">
+         Booking Request Submitted
         </h1>
 
         <p
@@ -78,8 +53,6 @@ function BookingSuccess() {
           Our team will verify your booking and contact you shortly.
 
         </p>
-
-        {/* ================= IMPORTANT NOTICE ================= */}
 
         <div
           className="

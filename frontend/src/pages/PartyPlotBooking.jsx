@@ -133,17 +133,17 @@ function PartyPlotBooking() {
     return;
   }
 
-  if (!/^[0-9]{10}$/.test(formData.phone)) {
+  if (!/^[6-9]\d{9}$/.test(formData.phone)) {
     toast.error("Phone number must contain exactly 10 digits.");
     return;
   }
 
-  if (
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
-  ) {
+  const email = formData.email.trim();
+  const emailRegex =/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+  if (!emailRegex.test(email)) {
     toast.error("Please enter a valid email address.");
     return;
-  }
+}
 
   if (
     !formData.customerName.trim() ||
@@ -282,8 +282,6 @@ return (
     <Toaster position="top-right" toastOptions={{duration: 3000, style: {background: "#1A1A1A", color: "#fff", border: "1px solid #D4AF37"}}} />
 
     <div className="max-w-6xl mx-auto bg-[#1A1A1A] border border-[#D4AF37]/20 rounded-3xl shadow-[0_0_40px_rgba(212,175,55,.08)] overflow-hidden">
-
-      {/* ── Change #3: Hero Header ── */}
       <div
         className="relative h-[45vh] flex items-center justify-center"
         style={{
@@ -304,8 +302,6 @@ return (
           </p>
         </div>
       </div>
-
-      {/* ── Change #14: Statistics Strip ── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-10 py-8 border-b border-[#D4AF37]/10">
         {[
           { value: "15,000", label: "sq.ft Lawn" },
@@ -322,8 +318,6 @@ return (
           </div>
         ))}
       </div>
-
-      {/* ── Change #15: Venue Highlights ── */}
       <div className="px-10 py-10 border-b border-[#D4AF37]/10">
         <p className="uppercase tracking-[0.3em] text-[#D4AF37] text-sm mb-3">Our Venues</p>
         <h2 className="font-serif text-4xl font-bold mb-2">Venue Highlights</h2>
@@ -370,12 +364,8 @@ return (
           ))}
         </div>
       </div>
-
-      {/* ── Change #4: Form wrapper ── */}
       <div className="p-10">
         <form onSubmit={handleSubmit} className="space-y-8">
-
-          {/* ── Change #5: Customer Details ── */}
           <div className="bg-[#222222] border border-[#D4AF37]/10 rounded-3xl p-6">
             <h2 className="text-2xl font-bold text-[#D4AF37] mb-6 flex items-center gap-2">
               👤 Customer Details
@@ -410,8 +400,6 @@ return (
               />
             </div>
           </div>
-
-          {/* ── Change #6: Wedding Dates ── */}
           <div className="bg-[#222222] border border-[#D4AF37]/10 rounded-3xl p-6">
             <h2 className="text-2xl font-bold text-[#D4AF37] mb-6 flex items-center gap-2">
               📅 Wedding Dates
@@ -443,8 +431,6 @@ return (
               </div>
             </div>
           </div>
-
-          {/* ── Change #8: Wedding Duration ── */}
           {weddingDays > 0 && (
             <div className="bg-[#222222] border border-[#D4AF37]/20 rounded-3xl p-6 shadow-md">
               <h3 className="text-lg font-bold text-[#D4AF37] mb-2">📆 Wedding Duration</h3>
@@ -453,8 +439,6 @@ return (
               </p>
             </div>
           )}
-
-          {/* ── Change #9: Wedding Package ── */}
           <div>
             <h2 className="text-2xl font-bold text-[#D4AF37] mb-6 flex items-center gap-2">
               🎉 Wedding Package
@@ -470,14 +454,11 @@ return (
               </p>
             </div>
           </div>
-
-          {/* ── Change #10: Optional Services ── */}
           <div>
             <h2 className="text-2xl font-bold text-[#D4AF37] mb-6 flex items-center gap-2">
               ⭐ Optional Services
             </h2>
             <div className="bg-[#222222] border border-[#D4AF37]/20 rounded-3xl p-6 space-y-4">
-              {/* Swimming Pool */}
               <label className="flex items-center justify-between p-4 bg-[#2B2B2B] rounded-xl border border-[#D4AF37]/10 cursor-pointer hover:border-[#D4AF37] hover:shadow-[0_0_15px_rgba(212,175,55,.12)] transition-all">
                 <div>
                   <h3 className="font-bold text-lg text-white">🏊 Swimming Pool</h3>
@@ -494,8 +475,6 @@ return (
                   />
                 </div>
               </label>
-
-              {/* Generator */}
               <label className="flex items-center justify-between p-4 bg-[#2B2B2B] rounded-xl border border-[#D4AF37]/10 cursor-pointer hover:border-[#D4AF37] hover:shadow-[0_0_15px_rgba(212,175,55,.12)] transition-all">
                 <div>
                   <h3 className="font-bold text-lg text-white">🔌 Generator Backup</h3>
@@ -514,16 +493,12 @@ return (
               </label>
             </div>
           </div>
-
-          {/* ── Changes #11: Estimated Amount ── */}
           <div className="bg-[#222222] border border-[#D4AF37] rounded-3xl p-8 text-center">
             <p className="text-gray-400 mb-2 uppercase tracking-widest text-sm">Estimated Amount</p>
             <p className="text-5xl font-bold text-[#D4AF37]">
               ₹ {calculateEstimate().toLocaleString("en-IN")}
             </p>
           </div>
-
-          {/* ── Change #12: Submit Button ── */}
           <div className="text-center">
             <button
               type="submit"
@@ -550,8 +525,6 @@ return (
 
 )}
             </button>
-
-            {/* ── Change #13: Confirmation text ── */}
             <p className="text-gray-400 text-sm mt-4">
               ✨ You'll receive a confirmation email shortly
             </p>
