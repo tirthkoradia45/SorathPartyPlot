@@ -10,7 +10,7 @@ import { buildApiUrl } from "../config/api";
 function VillaBooking() {
   const navigate = useNavigate();
   const [villas, setVillas] = useState([]);
-  const [availability, setAvailability] = useState(null);s
+  const [availability, setAvailability] = useState(null);
   const [formData, setFormData] = useState({
     customerName: "",
     phone: "",
