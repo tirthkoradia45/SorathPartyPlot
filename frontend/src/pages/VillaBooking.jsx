@@ -8,7 +8,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { buildApiUrl } from "../config/api";
 
 function VillaBooking() {
-  const navigate = useNavigate();d
+  const navigate = useNavigate();
   const [villas, setVillas] = useState([]);
   const [availability, setAvailability] = useState(null);s
   const [formData, setFormData] = useState({
