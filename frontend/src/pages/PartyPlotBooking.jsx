@@ -31,73 +31,81 @@ function PartyPlotBooking() {
   const [weddingDays, setWeddingDays] = useState(0);
   const handleChange = (e) => {
 
-    const {
+  const {
 
-      name,
+    name,
 
-      value,
+    value,
 
-      type,
+    type,
 
-      checked,
+    checked,
 
-    } = e.target;
+  } = e.target;
 
-    // Updated form values
-    const updatedData = {
+  let newValue =
+    type === "checkbox"
+      ? checked
+      : value;
 
-      ...formData,
+  // Allow only 10 digits for phone number
+  if (name === "phone") {
 
-      [name]:
+    newValue = newValue.replace(/\D/g, "").slice(0, 10);
 
-        type === "checkbox"
+  }
 
-          ? checked
+  const updatedData = {
 
-          : value,
+    ...formData,
 
-    };
-
-    setFormData(updatedData);
-
-
-    if (
-
-      updatedData.startDate &&
-
-      updatedData.endDate
-
-    ) {
-
-      const start = new Date(updatedData.startDate);
-
-      const end = new Date(updatedData.endDate);
-
-      const difference = end - start;
-
-      const days =
-
-        difference /
-
-        (1000 * 60 * 60 * 24) + 1;
-
-      if (days > 0) {
-
-        setWeddingDays(days);
-
-      }
-
-      else {
-
-        setWeddingDays(0);
-
-      }
-
-    }
+    [name]: newValue,
 
   };
 
+  setFormData(updatedData);
 
+  if (
+
+    updatedData.startDate &&
+
+    updatedData.endDate
+
+  ) {
+
+    const start = new Date(updatedData.startDate);
+
+    const end = new Date(updatedData.endDate);
+
+    const difference = end - start;
+
+    const days =
+
+      difference /
+
+      (1000 * 60 * 60 * 24) + 1;
+
+    if (days > 0) {
+
+      setWeddingDays(days);
+
+    }
+
+    else {
+
+      setWeddingDays(0);
+
+    }
+
+  }
+
+  else {
+
+    setWeddingDays(0);
+
+  }
+
+};
   const calculateEstimate = () => {
 
     let amount = 0;
@@ -128,8 +136,10 @@ function PartyPlotBooking() {
 
   e.preventDefault();
 
-  if (!formData.customerName.trim()) {
-    toast.error("Please enter your full name.");
+ const name = formData.customerName.trim();
+ const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+  if (!nameRegex.test(name)) {
+    toast.error("Please enter a valid full name.");
     return;
   }
 
@@ -177,7 +187,7 @@ function PartyPlotBooking() {
     const payload = {
       customerName: formData.customerName.trim(),
       phone: formData.phone.trim(),
-      email: formData.email.trim(),
+      email: formData.email.trim().toLowerCase(),
       startDate: formData.startDate,
       endDate: formData.endDate,
       swimmingPool: formData.swimmingPool,
@@ -374,6 +384,7 @@ return (
               <input
                 type="text"
                 name="customerName"
+                maxLength={50}
                 placeholder="Full Name"
                 value={formData.customerName}
                 onChange={handleChange}
@@ -381,8 +392,10 @@ return (
                 className="w-full bg-[#2B2B2B] border border-gray-700 rounded-xl px-5 py-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all"
               />
               <input
-                type="text"
+                type="tel"
                 name="phone"
+                inputMode="numeric"
+                maxLength={10}
                 placeholder="Phone Number"
                 value={formData.phone}
                 onChange={handleChange}
@@ -409,7 +422,7 @@ return (
                 <label className="block mb-2 font-semibold text-gray-400">Start Date</label>
                 <input
                   type="date"
-                  min={new Date().toISOString().split("T")[0]}
+                  min={formData.startDate ||new Date().toISOString().split("T")[0]}
                   name="startDate"
                   value={formData.startDate}
                   onChange={handleChange}
@@ -421,7 +434,7 @@ return (
                 <label className="block mb-2 font-semibold text-gray-400">End Date</label>
                 <input
                   type="date"
-                  min={new Date().toISOString().split("T")[0]}
+                  min={formData.startDate ||new Date().toISOString().split("T")[0]}
                   name="endDate"
                   value={formData.endDate}
                   onChange={handleChange}
@@ -502,7 +515,7 @@ return (
           <div className="text-center">
             <button
               type="submit"
-              disabled={loading || weddingDays === 0}
+              disabled={loading || weddingDays === 0 || !formData.customerName ||!formData.phone || !formData.email}
               className={`w-full py-5 rounded-xl text-lg font-bold transition-all duration-300 ${
                 loading || weddingDays === 0
                   ? "bg-gray-600 text-gray-300 cursor-not-allowed"

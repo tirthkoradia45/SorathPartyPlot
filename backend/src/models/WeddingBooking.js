@@ -7,17 +7,19 @@ const weddingBookingSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-
     },
 
     phone: {
       type: String,
       required: true,
+      trim:true,
     },
 
     email: {
       type: String,
       required: true,
+      trim:true,
+      lowercase:true,
     },
 
     startDate: {
@@ -53,6 +55,7 @@ const weddingBookingSchema = new mongoose.Schema(
 
       type: Number,
       required: true,
+      min:0,
 
     },
 

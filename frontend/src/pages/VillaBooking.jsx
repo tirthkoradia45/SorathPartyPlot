@@ -11,6 +11,8 @@ function VillaBooking() {
   const navigate = useNavigate();
   const [villas, setVillas] = useState([]);
   const [availability, setAvailability] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [checkingAvailability, setCheckingAvailability] = useState(false);
   const [formData, setFormData] = useState({
     customerName: "",
     phone: "",
@@ -46,40 +48,74 @@ function VillaBooking() {
   }, []);
 
   // HANDLE INPUT CHANGE
-  const handleChange = (e) => {
+const handleChange = (e) => {
+  let value =
+    e.target.type === "number"
+      ? Number(e.target.value)
+      : e.target.value;
 
-    const value =
-      e.target.type === "number"
-        ? Number(e.target.value)
-        : e.target.value;
+  if (e.target.name === "phone") {
+    value = value.replace(/\D/g, "").slice(0, 10);
+  }
 
-    setFormData({
-      ...formData,
-      [e.target.name]: value,
-    });
+  // Clear old availability when booking details change
+  if (
+    e.target.name === "villaId" ||
+    e.target.name === "checkInDate" ||
+    e.target.name === "checkOutDate"
+  ) {
+    setAvailability(null);
+  }
 
+  setFormData({
+    ...formData,
+    [e.target.name]: value,
+  });
 };
 // CHECK AVAILABILITY
-  const checkAvailability = async () => {
+const checkAvailability = async () => {
 
-    if (
-      !formData.villaId ||
-      !formData.checkInDate ||
-      !formData.checkOutDate
-    ) {
-      return;
-    }
+  if (
+    !formData.villaId ||
+    !formData.checkInDate ||
+    !formData.checkOutDate
+  ) {
+    setAvailability(null);
+    return;
+  }
 
-    try {
-      const response = await axios.get(
-        buildApiUrl(`/api/bookings/availability?villaId=${formData.villaId}&checkInDate=${formData.checkInDate}&checkOutDate=${formData.checkOutDate}`)
-      );
-      setAvailability(response.data);
-    } catch (error) {
-      console.error(error);
-      toast.error("Unable to check availability right now.");
-    }
-  };
+  if (
+    new Date(formData.checkOutDate) <=
+    new Date(formData.checkInDate)
+  ) {
+    setAvailability(null);
+    return;
+  }
+
+  setCheckingAvailability(true);
+
+  try {
+
+    const response = await axios.get(
+      buildApiUrl(
+        `/api/bookings/availability?villaId=${formData.villaId}&checkInDate=${formData.checkInDate}&checkOutDate=${formData.checkOutDate}`
+      )
+    );
+
+    setAvailability(response.data);
+
+  } catch (error) {
+
+    console.error(error);
+
+    setAvailability(null);
+
+  } finally {
+
+    setCheckingAvailability(false);
+
+  }
+};
 // AUTO CHECK AVAILABILITY
 
   useEffect(() => {
@@ -95,16 +131,20 @@ const handleSubmit = async (e) => {
 
   e.preventDefault();
 
-  if (!formData.customerName.trim()) {
-    toast.error("Please enter your full name.");
-    return;
-  }
+  const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
 
-  if (!/^[6-9]\d{9}$/.test(formData.phone)) {
-    toast.error("Phone number must contain exactly 10 digits.");
-    return;
-  }
-  const email = formData.email.trim();
+if (!nameRegex.test(formData.customerName.trim())) {
+  toast.error("Name should contain only letters and spaces.");
+  return;
+}
+
+const phoneRegex = /^[6-9]\d{9}$/;
+
+if (!phoneRegex.test(formData.phone.trim())) {
+  toast.error("Please enter a valid 10-digit Indian mobile number.");
+  return;
+}
+  const email = formData.email.trim().toLowerCase();;
   const emailRegex =/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
   if (!emailRegex.test(email)) {
     toast.error("Please enter a valid email address.");
@@ -115,7 +155,7 @@ const handleSubmit = async (e) => {
     return;
   }
 
-  if (formData.villaCount < 1) {
+  if (!Number.isInteger(formData.villaCount) ||formData.villaCount < 1) {
     toast.error("Please select at least one villa.");
     return;
   }
@@ -134,23 +174,25 @@ const handleSubmit = async (e) => {
     toast.error("Check-out date must be after the check-in date.");
     return;
   }
+// Wait until availability is loaded
+if (checkingAvailability) {
+  toast.error("Checking availability. Please wait...");
+  return;
+}
 
-  // Frontend Validation
-  if (
-    availability &&
-    formData.villaCount > availability.availableVillas
-  ) {
+// Frontend Validation
+if (formData.villaCount > availability.availableVillas) {
 
-    toast.error(
-      `Only ${availability.availableVillas} villas available`
-    );
+  toast.error(
+    `Only ${availability.availableVillas} villas available.`
+  );
 
-    return;
+  return;
 
-  }
+}
 
   try {
-
+    setLoading(true);
     const payload = {
       customerName: formData.customerName.trim(),
       phone: formData.phone.trim(),
@@ -213,6 +255,7 @@ const handleSubmit = async (e) => {
     });
 
     setAvailability(null);
+    setLoading(false);
 
   } catch (error) {
 
@@ -235,7 +278,9 @@ const handleSubmit = async (e) => {
     );
 
   }
-
+  setLoading(false);
+} finally{
+  setLoading(false);
 }
 
 };
@@ -372,15 +417,18 @@ const handleSubmit = async (e) => {
               name="customerName"
               placeholder="Full Name"
               value={formData.customerName}
+              maxLength={50}
               onChange={handleChange}
               required
               className="w-full bg-[#252525] border border-gray-700 rounded-xl px-5 py-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all duration-300"
             />
 
             <input
-              type="text"
+              type="tel"
               name="phone"
               placeholder="Phone Number"
+              inputMode="numeric"
+              maxLength={10}
               value={formData.phone}
               onChange={handleChange}
               required
@@ -429,6 +477,7 @@ const handleSubmit = async (e) => {
               type="date"
               name="checkInDate"
               value={formData.checkInDate}
+              min={new Date().toISOString().split("T")[0]}
               onChange={handleChange}
               required
               className="w-full bg-[#252525] border border-gray-700 rounded-xl px-5 py-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all duration-300"
@@ -438,17 +487,27 @@ const handleSubmit = async (e) => {
               type="date"
               name="checkOutDate"
               value={formData.checkOutDate}
+              min={formData.checkInDate ||new Date().toISOString().split("T")[0]}
               onChange={handleChange}
               required
               className="w-full bg-[#252525] border border-gray-700 rounded-xl px-5 py-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 transition-all duration-300"
             />
-
-            <button
-              type="submit"
-              className="w-full bg-[#D4AF37] text-black font-bold text-lg py-4 rounded-xl transition-all duration-300 hover:bg-[#c49b2c] hover:shadow-[0_0_25px_rgba(212,175,55,.35)] hover:scale-[1.02] active:scale-95"
-            >
-              BOOK NOW
-            </button>
+<button
+  type="submit"
+  disabled={loading || checkingAvailability}
+  className={`w-full text-black font-bold text-lg py-4 rounded-xl transition-all duration-300
+    ${
+      loading || checkingAvailability
+        ? "bg-gray-500 cursor-not-allowed"
+        : "bg-[#D4AF37] hover:bg-[#c49b2c] hover:shadow-[0_0_25px_rgba(212,175,55,.35)] hover:scale-[1.02] active:scale-95"
+    }`}
+>
+  {loading
+    ? "Booking..."
+    : checkingAvailability
+    ? "Checking Availability..."
+    : "BOOK NOW"}
+</button>
           </form>
           <hr className="my-8 border-gray-700" />
           <div className="space-y-4 text-gray-300">

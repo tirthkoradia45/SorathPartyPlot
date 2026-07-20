@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Booking = require("../models/Booking");
 const Villa = require("../models/Villa");
 const WeddingBooking = require("../models/WeddingBooking");
@@ -8,7 +9,8 @@ const getAllBookings = async (req, res) => {
     try {
 
         const bookings = await Booking.find()
-            .populate("villaId");
+            .populate("villaId")
+            .sort({ createdAt: -1 });
 
         return res.status(200).json({
 
@@ -52,6 +54,88 @@ const createBooking = async (req, res) => {
             checkOutDate
 
         } = req.body;
+        // Required field validation
+if (
+    !customerName ||
+    !phone ||
+    !email ||
+    !villaId ||
+    !checkInDate ||
+    !checkOutDate
+) {
+    return res.status(400).json({
+        success: false,
+        message: "All fields are required."
+    });
+}
+
+// Name validation
+const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+
+if (!nameRegex.test(customerName.trim())) {
+    return res.status(400).json({
+        success: false,
+        message: "Invalid customer name."
+    });
+}
+
+// Phone validation
+const phoneRegex = /^[6-9]\d{9}$/;
+
+if (!phoneRegex.test(phone.trim())) {
+    return res.status(400).json({
+        success: false,
+        message: "Invalid phone number."
+    });
+}
+
+// Email validation
+const emailRegex =
+/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+if (!emailRegex.test(email.trim().toLowerCase())) {
+    return res.status(400).json({
+        success: false,
+        message: "Invalid email address."
+    });
+}
+
+// Villa count validation
+if (
+    !Number.isInteger(Number(villaCount)) ||
+    Number(villaCount) < 1
+) {
+    return res.status(400).json({
+        success: false,
+        message: "Villa count must be at least 1."
+    });
+}
+
+// Date validation
+if (
+    new Date(checkOutDate) <=
+    new Date(checkInDate)
+) {
+    return res.status(400).json({
+        success: false,
+        message: "Check-out date must be after check-in date."
+    });
+}
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+if (new Date(checkInDate) <= today) {
+    return res.status(400).json({
+        success: false,
+        message: "Check-in date cannot be in the past."
+    });
+}
+if (!mongoose.Types.ObjectId.isValid(villaId)) {
+    return res.status(400).json({
+        success: false,
+        message: "Invalid villa selected."
+    });
+}
 
         // Check if a wedding is already booked
 
@@ -164,7 +248,7 @@ const createBooking = async (req, res) => {
 
             customerName: customerName.trim(),
 
-            phone,
+            phone: phone.trim(),
 
             email: email.toLowerCase().trim(),
 
@@ -219,6 +303,33 @@ const checkAvailability = async (req, res) => {
             checkOutDate
 
         } = req.query;
+        if (
+    !villaId ||
+    !checkInDate ||
+    !checkOutDate
+) {
+    return res.status(400).json({
+        success: false,
+        message: "Missing required fields."
+    });
+}
+
+if (!mongoose.Types.ObjectId.isValid(villaId)) {
+    return res.status(400).json({
+        success: false,
+        message: "Invalid villa selected."
+    });
+}
+
+if (
+    new Date(checkOutDate) <=
+    new Date(checkInDate)
+) {
+    return res.status(400).json({
+        success: false,
+        message: "Check-out date must be after check-in date."
+    });
+}
         const villa = await Villa.findById(villaId);
 
         if (!villa) {
@@ -346,6 +457,13 @@ const updateBookingStatus = async (req, res) => {
     try {
 
         const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({
+        success: false,
+        message: "Invalid booking ID."
+    });
+
+}
         const { status } = req.body;
 
         const allowedStatus = [
@@ -369,25 +487,8 @@ const updateBookingStatus = async (req, res) => {
 
         }
 
-        const booking = await Booking.findByIdAndUpdate(
-
-            id,
-
-            {
-
-                status
-
-            },
-
-            {
-
-                new: true,
-
-                runValidators: true
-
-            }
-
-        ).populate("villaId");
+        // Fetch booking
+        const booking = await Booking.findById(id);
 
         if (!booking) {
 
@@ -400,6 +501,37 @@ const updateBookingStatus = async (req, res) => {
             });
 
         }
+
+        // Allowed status transitions
+        const validTransitions = {
+
+            Pending: ["Confirmed", "Cancelled"],
+
+            Confirmed: ["Completed", "Cancelled"],
+
+            Completed: [],
+
+            Cancelled: []
+
+        };
+
+        if (!validTransitions[booking.status].includes(status)) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: `Cannot change booking from ${booking.status} to ${status}.`
+
+            });
+
+        }
+
+        booking.status = status;
+
+        await booking.save();
+
+        await booking.populate("villaId");
 
         return res.status(200).json({
 

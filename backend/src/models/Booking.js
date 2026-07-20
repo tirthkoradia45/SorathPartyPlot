@@ -5,18 +5,23 @@ const bookingSchema = new mongoose.Schema({
     // Customer Name
     customerName: {
         type: String,
-        required: true
+        required: true,
+        trim:true,
     },
 
     // Customer Phone
     phone: {
         type: String,
-        required: true
+        required: true,
+        trim: true,
     },
 
     // Customer Email
     email: {
-        type: String
+        type: String,
+        required:true,
+        lowercase: true,
+        trim:true,
     },
 
     // Selected Villa
@@ -30,7 +35,8 @@ const bookingSchema = new mongoose.Schema({
     villaCount: {
         type: Number,
         required: true,
-        default: 1
+        default: 1,
+        min:1
     },
 
     // Check In Date
